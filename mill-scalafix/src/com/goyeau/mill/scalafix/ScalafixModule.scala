@@ -2,7 +2,7 @@ package com.goyeau.mill.scalafix
 
 import java.net.URLClassLoader
 import mill._
-import mill.api.{Loose, Result}
+import mill.api.{Logger, Loose, Result}
 import mill.scalalib._
 import mill.define.{Command, Target}
 import os._
@@ -10,6 +10,7 @@ import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError._
 import scala.collection.JavaConverters._
 import scala.compat.java8.OptionConverters._
+import scala.collection.compat._
 
 trait ScalafixModule extends ScalaModule {
   override def scalacPluginIvyDeps: Target[Loose.Agg[Dep]] =
@@ -18,48 +19,68 @@ trait ScalafixModule extends ScalaModule {
   def scalafixConfig: T[Option[Path]]    = T(None)
   def scalafixIvyDeps: T[Loose.Agg[Dep]] = Agg.empty[Dep]
 
+  implicit class ResultOps[+A](result: Result[A]) {
+    def flatMap[B](f: A => Result[B]): Result[B] =
+      result match {
+        case Result.Success(value) => f(value)
+        case result                => result.asInstanceOf[Result[B]] // scalafix:ok
+      }
+  }
+
   /**
     * Run Scalafix.
     */
   def fix(args: String*): Command[Unit] =
-    T.command(
-      ScalafixModule.fixAction(
-        allSourceFiles(),
-        localClasspath(),
-        scalaVersion(),
-        scalacOptions(),
-        resolveDeps(scalafixIvyDeps)(),
-        scalafixConfig(),
-        args: _*
-      )
-    )
+    T.command {
+      for {
+        toolClassPath <- Lib.resolveDependencies(
+          repositories,
+          resolveCoursierDependency().apply(_),
+          Agg(ivy"ch.epfl.scala:scalafix-cli_2.12.11:0.9.15") ++ scalafixIvyDeps()
+        )
+        result <- ScalafixModule.fixAction(
+          T.ctx.log,
+          allSourceFiles().map(_.path),
+          localClasspath().map(_.path),
+          scalaVersion(),
+          scalacOptions(),
+          toolClassPath.map(_.path),
+          scalafixConfig(),
+          args: _*
+        )
+      } yield result
+    }
 }
 
 object ScalafixModule {
   def fixAction(
-      sources: Seq[PathRef],
-      classpath: Seq[PathRef],
+      log: Logger,
+      sources: Seq[Path],
+      classpath: Seq[Path],
       scalaVersion: String,
       scalacOptions: Seq[String],
-      toolClassPath: Agg[PathRef],
+      toolClassPath: Agg[Path],
       scalafixConfig: Option[Path],
       args: String*
   ): Result[Unit] =
     if (sources.nonEmpty) {
+      val toolClassloader = new URLClassLoader(
+        toolClassPath.map(_.toNIO.toUri.toURL).iterator.toArray,
+        new ScalafixInterfacesClassloader(getClass.getClassLoader)
+      )
       val scalafix = Scalafix
-        .classloadInstance(getClass.getClassLoader)
+        .classloadInstance(toolClassloader)
         .newArguments()
         .withParsedArguments(args.asJava)
         .withWorkingDirectory(pwd.toNIO)
         .withConfig(scalafixConfig.map(_.toNIO).asJava)
-        .withClasspath(classpath.map(_.path.toNIO).asJava)
+        .withClasspath(classpath.map(_.toNIO).asJava)
         .withScalaVersion(scalaVersion)
         .withScalacOptions(scalacOptions.asJava)
-        .withPaths(sources.map(_.path.toNIO).asJava)
-        .withToolClasspath(
-          new URLClassLoader(toolClassPath.map(_.path.toNIO.toUri.toURL).toArray, getClass.getClassLoader)
-        )
+        .withPaths(sources.map(_.toNIO).asJava)
+        .withToolClasspath(toolClassloader)
 
+      log.info(s"Rewriting and linting ${sources.size} Scala sources against ${scalafix.rulesThatWillRun.size} rules")
       val errors = scalafix.run()
       if (errors.isEmpty) Result.Success(())
       else {
