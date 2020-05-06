@@ -17,7 +17,7 @@ jobs:
       - name: Pull all history with tags for correct versionning
         run: git fetch --prune --unshallow
       - name: Style checks
-        run: ./mill __.checkFormat
+        run: ./mill all __.checkFormat "__.fix --check"
       - name: Test
         run: |
           git config --global user.name "CI"
