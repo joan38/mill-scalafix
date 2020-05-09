@@ -9,19 +9,17 @@ on:
     types: [published]
 
 jobs:
-  checks:
+  pipeline:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Pull all history with tags for correct versionning
         run: git fetch --prune --unshallow
-      - name: Style checks
-        run: ./mill all __.checkFormat "__.fix --check"
-      - name: Test
+      - name: Checks
         run: |
           git config --global user.name "CI"
-          ./mill __.test
+          ./mill all __.checkFormat "__.fix --check" __.docJar __.test
       - name: Publish
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'release'
         run: |
