@@ -11,7 +11,7 @@ A [scalafix](https://scalacenter.github.io/scalafix) plugin for Mill build tool.
 
 *build.sc*:
 ```scala
-import $ivy.`com.goyeau::mill-scalafix:8cfaccf`
+import $ivy.`com.goyeau::mill-scalafix:<latest version>`
 import com.goyeau.mill.scalafix.ScalafixModule
 import mill.scalalib._
 
