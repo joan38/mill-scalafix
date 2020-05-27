@@ -71,7 +71,7 @@ atlassian-ide-plugin.xml
 #######################################
 .nbattrs
 
-# newt & Docker
+# Docker
 Dockerfile
 
 # Byte-compiled / optimized / DLL files
@@ -101,3 +101,6 @@ MANIFEST
 env/
 venv/
 ENV/
+
+# BSP
+/.bsp/

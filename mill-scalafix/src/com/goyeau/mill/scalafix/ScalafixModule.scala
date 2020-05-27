@@ -1,7 +1,7 @@
 package com.goyeau.mill.scalafix
 
 import java.net.URLClassLoader
-import mill._
+import mill.{Agg, T}
 import mill.api.{Logger, Loose, Result}
 import mill.scalalib._
 import mill.define.{Command, Target}
@@ -36,7 +36,8 @@ trait ScalafixModule extends ScalaModule {
         toolClassPath <- Lib.resolveDependencies(
           repositories,
           resolveCoursierDependency().apply(_),
-          Agg(ivy"ch.epfl.scala:scalafix-cli_2.12.11:0.9.15") ++ scalafixIvyDeps()
+          Agg(ivy"ch.epfl.scala:scalafix-cli_${scalaVersion()}:${BuildInfo.scalafixVersion}") ++
+            scalafixIvyDeps()
         )
         result <- ScalafixModule.fixAction(
           T.ctx.log,

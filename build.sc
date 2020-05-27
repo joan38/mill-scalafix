@@ -1,6 +1,7 @@
 import $ivy.`com.goyeau::mill-git:0.1.0-8-5ed3839`
 import $ivy.`com.goyeau::mill-scalafix:0.1.1`
 import $ivy.`com.lihaoyi::mill-contrib-bsp:$MILL_VERSION`
+import $ivy.`com.lihaoyi::mill-contrib-buildinfo:$MILL_VERSION`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest:0.3.1`
 import $ivy.`io.github.davidgregory084::mill-tpolecat:0.1.3`
 import com.goyeau.mill.git.GitVersionedPublishModule
@@ -8,6 +9,7 @@ import com.goyeau.mill.scalafix.ScalafixModule
 import de.tobiasroeser.mill.integrationtest._
 import io.github.davidgregory084.TpolecatModule
 import mill._
+import mill.contrib.buildinfo.BuildInfo
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 import mill.scalalib.scalafmt.ScalafmtModule
@@ -18,6 +20,7 @@ class MillScalafixModule(val crossScalaVersion: String)
     with TpolecatModule
     with ScalafmtModule
     with ScalafixModule
+    with BuildInfo
     with GitVersionedPublishModule {
   override def scalacOptions =
     super
@@ -30,12 +33,16 @@ class MillScalafixModule(val crossScalaVersion: String)
       ivy"com.lihaoyi::mill-main:$millVersion",
       ivy"com.lihaoyi::mill-scalalib:$millVersion"
     )
+  val scalafixVersion = "0.9.16"
   override def ivyDeps =
     super.ivyDeps() ++ Agg(
-      ivy"ch.epfl.scala:scalafix-interfaces:0.9.15",
+      ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
       ivy"org.scala-lang.modules::scala-collection-compat:2.1.6",
       ivy"org.scala-lang.modules::scala-java8-compat:0.9.1"
     )
+
+  def buildInfoPackageName = Some("com.goyeau.mill.scalafix")
+  def buildInfoMembers: T[Map[String, String]] = T(Map("scalafixVersion" -> scalafixVersion))
 
   override def artifactName = "mill-scalafix"
   def pomSettings =
@@ -78,4 +85,4 @@ class IntegrationTestModule(val crossScalaVersion: String) extends MillIntegrati
 }
 
 lazy val crossScalaVersions = Seq("2.13.2", "2.12.11")
-def millVersionFor(scalaVersion: String) = if (scalaVersion.startsWith("2.13")) "0.6.2-35-7d1144" else "0.6.2"
+def millVersionFor(scalaVersion: String) = if (scalaVersion.startsWith("2.13")) "0.7.2" else "0.6.2"
