@@ -5,17 +5,29 @@ import mill.scalalib._
 import os._
 
 object project extends ScalaModule with ScalafixModule {
-  def scalaVersion           = "2.12.11"
-  override def scalacOptions = Seq("-Ywarn-unused")
-  def scalafixIvyDeps        = Agg(ivy"com.geirsson::example-scalafix-rule:1.3.0")
+  def scalaVersion           = "2.13.2"
+  override def scalacOptions = Seq("-Ywarn-unused", "-Yrangepos", "-P:semanticdb:synthetics:on")
+  def scalafixIvyDeps        = Agg(ivy"org.scala-lang.modules::scala-collection-migrations:2.1.6")
 }
 
 def verify() =
     T.command {
       val fixedScala = read(pwd / "project" / "src" / "Fix.scala")
-      val expected   = """object Fix {
+      val expected = """import scala.language.postfixOps
+                       |object Tuple2ZippedSrc213 {
+                       |  def zipped(xs: List[Int], ys: List[Int]): Unit = {
+                       |    xs.lazyZip(ys)
+                       |    xs.lazyZip(ys)
+                       |    (xs.lazyZip(ys) )
+                       |    ((xs).lazyZip((ys)))
+                       |    xs.lazyZip(
+                       |      ys)
+                       |    /* a *//* b */ xs /* c */.lazyZip(/* d */ ys /* e */)/* f *//* g *//* h */
+                       |    coll(1).lazyZip(coll(2))
+                       |    List(1, 2, 3).lazyZip(Array(1))
+                       |  }
+                       |  def coll(x: Int): List[Int] = ???
                        |}
-                       |// v1 SyntacticRule!
                        |""".stripMargin
       assert(fixedScala == expected)
     }

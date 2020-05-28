@@ -36,8 +36,9 @@ trait ScalafixModule extends ScalaModule {
         toolClassPath <- Lib.resolveDependencies(
           repositories,
           resolveCoursierDependency().apply(_),
-          Agg(ivy"ch.epfl.scala:scalafix-cli_${scalaVersion()}:${BuildInfo.scalafixVersion}") ++
+          Agg(ivy"ch.epfl.scala:scalafix-cli_2.12.11:${BuildInfo.scalafixVersion}") ++
             scalafixIvyDeps()
+              .map(ivy => ivy.copy(cross = CrossVersion.Constant("_2.12", platformed = ivy.cross.platformed)))
         )
         result <- ScalafixModule.fixAction(
           T.ctx.log,
