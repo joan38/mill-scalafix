@@ -14,26 +14,22 @@ import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 import mill.scalalib.scalafmt.ScalafmtModule
 
-object `mill-scalafix` extends Cross[MillScalafixModule](crossScalaVersions: _*)
-class MillScalafixModule(val crossScalaVersion: String)
-    extends CrossScalaModule
+object `mill-scalafix`
+    extends ScalaModule
     with TpolecatModule
     with ScalafmtModule
     with ScalafixModule
     with BuildInfo
     with GitVersionedPublishModule {
-  override def scalacOptions =
-    super
-      .scalacOptions()
-      .filter(!scalaVersion().startsWith("2.13") || !Seq("-Wunused:imports", "-Xfatal-warnings").contains(_))
+  override def scalaVersion = "2.13.2"
 
-  lazy val millVersion = millVersionFor(crossScalaVersion)
+  lazy val millVersion = "0.7.3"
   override def compileIvyDeps =
     super.compileIvyDeps() ++ Agg(
       ivy"com.lihaoyi::mill-main:$millVersion",
       ivy"com.lihaoyi::mill-scalalib:$millVersion"
     )
-  val scalafixVersion = "0.9.16"
+  val scalafixVersion = "0.9.17"
   override def ivyDeps =
     super.ivyDeps() ++ Agg(
       ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
@@ -41,7 +37,7 @@ class MillScalafixModule(val crossScalaVersion: String)
       ivy"org.scala-lang.modules::scala-java8-compat:0.9.1"
     )
 
-  def buildInfoPackageName = Some("com.goyeau.mill.scalafix")
+  def buildInfoPackageName                     = Some("com.goyeau.mill.scalafix")
   def buildInfoMembers: T[Map[String, String]] = T(Map("scalafixVersion" -> scalafixVersion))
 
   override def artifactName = "mill-scalafix"
@@ -56,12 +52,9 @@ class MillScalafixModule(val crossScalaVersion: String)
     )
 }
 
-object itest extends Cross[IntegrationTestModule](crossScalaVersions: _*)
-class IntegrationTestModule(val crossScalaVersion: String) extends MillIntegrationTestModule {
-  override def millSourcePath = super.millSourcePath / ammonite.ops.up
-
-  def millTestVersion  = millVersionFor(crossScalaVersion)
-  def pluginsUnderTest = Seq(`mill-scalafix`(crossScalaVersion))
+object itest extends MillIntegrationTestModule {
+  def millTestVersion  = `mill-scalafix`.millVersion
+  def pluginsUnderTest = Seq(`mill-scalafix`)
   override def testInvocations =
     Seq(
       PathRef(sources().head.path / "fix") -> Seq(
@@ -83,6 +76,3 @@ class IntegrationTestModule(val crossScalaVersion: String) extends MillIntegrati
       )
     )
 }
-
-lazy val crossScalaVersions = Seq("2.13.2", "2.12.11")
-def millVersionFor(scalaVersion: String) = if (scalaVersion.startsWith("2.13")) "0.7.2" else "0.6.2"
