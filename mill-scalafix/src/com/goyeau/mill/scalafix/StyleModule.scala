@@ -10,13 +10,13 @@ import mill.scalalib.scalafmt.ScalafmtModule
 trait StyleModule extends ScalafmtModule with ScalafixModule {
   def style(): Command[Unit] =
     T.command {
-      reformat()
-      fix()
+      reformat()()
+      fix()()
     }
 
   def checkStyle(): Command[Unit] =
     T.command {
-      checkFormat()
-      fix("--check")
+      checkFormat()()
+      fix("--check")()
     }
 }
