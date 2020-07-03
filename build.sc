@@ -1,29 +1,27 @@
-import $ivy.`com.goyeau::mill-git:0.1.0-8-5ed3839`
-import $ivy.`com.goyeau::mill-scalafix:0.1.1`
+import $ivy.`com.goyeau::mill-git:0.1.1`
+import $ivy.`com.goyeau::mill-scalafix:0.1.3`
 import $ivy.`com.lihaoyi::mill-contrib-bsp:$MILL_VERSION`
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:$MILL_VERSION`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest:0.3.1`
 import $ivy.`io.github.davidgregory084::mill-tpolecat:0.1.3`
 import com.goyeau.mill.git.GitVersionedPublishModule
-import com.goyeau.mill.scalafix.ScalafixModule
+import com.goyeau.mill.scalafix.StyleModule
 import de.tobiasroeser.mill.integrationtest._
 import io.github.davidgregory084.TpolecatModule
 import mill._
 import mill.contrib.buildinfo.BuildInfo
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
-import mill.scalalib.scalafmt.ScalafmtModule
 
 object `mill-scalafix`
     extends ScalaModule
     with TpolecatModule
-    with ScalafmtModule
-    with ScalafixModule
+    with StyleModule
     with BuildInfo
     with GitVersionedPublishModule {
   override def scalaVersion = "2.13.2"
 
-  lazy val millVersion = "0.7.3"
+  lazy val millVersion = "0.7.4"
   override def compileIvyDeps =
     super.compileIvyDeps() ++ Agg(
       ivy"com.lihaoyi::mill-main:$millVersion",
