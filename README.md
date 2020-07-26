@@ -30,6 +30,15 @@ object project extends ScalaModule with ScalafixModule {
 mill-git.fix A Scalafix linter error was reported
 ```
 
+### Using External Rules
+
+You're also able to use external Scalafix rules by adding them like the below
+example:
+
+```scala
+def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:0.4.0")
+```
+
 ### Scalafix Arguments
 
 mill-scalafix takes any argument that can be passed to the [Scalafix the command line tool](https://scalacenter.github.io/scalafix/docs/users/installation.html#command-line).  
