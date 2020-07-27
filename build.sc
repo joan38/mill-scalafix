@@ -4,7 +4,7 @@ import $ivy.`com.lihaoyi::mill-contrib-bsp:$MILL_VERSION`
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:$MILL_VERSION`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest:0.3.1`
 import $ivy.`io.github.davidgregory084::mill-tpolecat:0.1.4`
-import com.goyeau.mill.git.GitVersionedPublishModule
+import com.goyeau.mill.git.{GitVersionedPublishModule, GitVersionModule}
 import com.goyeau.mill.scalafix.StyleModule
 import de.tobiasroeser.mill.integrationtest._
 import io.github.davidgregory084.TpolecatModule
@@ -38,7 +38,8 @@ object `mill-scalafix`
   def buildInfoPackageName                     = Some("com.goyeau.mill.scalafix")
   def buildInfoMembers: T[Map[String, String]] = T(Map("scalafixVersion" -> scalafixVersion))
 
-  override def artifactName = "mill-scalafix"
+  override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
+  override def artifactName   = "mill-scalafix"
   def pomSettings =
     PomSettings(
       description = "A Scalafix plugin for Mill build tool",
