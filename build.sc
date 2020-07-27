@@ -1,9 +1,9 @@
 import $ivy.`com.goyeau::mill-git:0.1.1`
-import $ivy.`com.goyeau::mill-scalafix:0.1.3`
+import $ivy.`com.goyeau::mill-scalafix:0.1.4`
 import $ivy.`com.lihaoyi::mill-contrib-bsp:$MILL_VERSION`
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:$MILL_VERSION`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest:0.3.1`
-import $ivy.`io.github.davidgregory084::mill-tpolecat:0.1.3`
+import $ivy.`io.github.davidgregory084::mill-tpolecat:0.1.4`
 import com.goyeau.mill.git.GitVersionedPublishModule
 import com.goyeau.mill.scalafix.StyleModule
 import de.tobiasroeser.mill.integrationtest._
@@ -19,9 +19,9 @@ object `mill-scalafix`
     with StyleModule
     with BuildInfo
     with GitVersionedPublishModule {
-  override def scalaVersion = "2.13.2"
+  override def scalaVersion = "2.13.3"
 
-  lazy val millVersion = "0.7.4"
+  lazy val millVersion = "0.8.0"
   override def compileIvyDeps =
     super.compileIvyDeps() ++ Agg(
       ivy"com.lihaoyi::mill-main:$millVersion",
