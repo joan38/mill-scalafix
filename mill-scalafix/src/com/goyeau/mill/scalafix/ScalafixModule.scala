@@ -13,37 +13,29 @@ import scala.jdk.CollectionConverters._
 
 trait ScalafixModule extends ScalaModule {
   override def scalacPluginIvyDeps: Target[Loose.Agg[Dep]] =
-    super.scalacPluginIvyDeps() ++ Agg(ivy"org.scalameta:::semanticdb-scalac:4.3.18")
+    super.scalacPluginIvyDeps() ++ Agg(ivy"org.scalameta:::semanticdb-scalac:4.3.20")
 
-  def scalafixConfig: T[Option[Path]] = T(None)
-  def scalafixIvyDeps: T[Agg[Dep]]    = Agg.empty[Dep]
-
-  implicit class ResultOps[+A](result: Result[A]) {
-    def flatMap[B](f: A => Result[B]): Result[B] =
-      result match {
-        case Result.Success(value) => f(value)
-        case result                => result.asInstanceOf[Result[B]] // scalafix:ok
-      }
-  }
+  def scalafixConfig: T[Option[Path]]       = T(None)
+  def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]
+  def scalafixScalaBinaryVersion: T[String] = "2.12"
 
   /**
     * Run Scalafix.
     */
   def fix(args: String*): Command[Unit] =
     T.command {
-      for {
-        result <- ScalafixModule.fixAction(
-          T.ctx.log,
-          repositories,
-          allSourceFiles().map(_.path),
-          localClasspath().map(_.path),
-          scalaVersion(),
-          scalacOptions(),
-          scalafixIvyDeps(),
-          scalafixConfig(),
-          args: _*
-        )
-      } yield result
+      ScalafixModule.fixAction(
+        T.ctx().log,
+        repositories,
+        allSourceFiles().map(_.path),
+        localClasspath().map(_.path),
+        scalaVersion(),
+        scalafixScalaBinaryVersion(),
+        scalacOptions(),
+        scalafixIvyDeps(),
+        scalafixConfig(),
+        args: _*
+      )
     }
 }
 
@@ -54,6 +46,7 @@ object ScalafixModule {
       sources: Seq[Path],
       classpath: Seq[Path],
       scalaVersion: String,
+      scalaBinaryVersion: String,
       scalacOptions: Seq[String],
       scalafixIvyDeps: Agg[Dep],
       scalafixConfig: Option[Path],
@@ -61,7 +54,7 @@ object ScalafixModule {
   ): Result[Unit] =
     if (sources.nonEmpty) {
       val scalafix = Scalafix
-        .fetchAndClassloadInstance("2.12", repositories.map(CoursierUtils.toApiRepository).asJava)
+        .fetchAndClassloadInstance(scalaBinaryVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
         .newArguments()
         .withParsedArguments(args.asJava)
         .withWorkingDirectory(pwd.toNIO)
