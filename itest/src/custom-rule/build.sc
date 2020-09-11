@@ -7,7 +7,7 @@ import os._
 object project extends ScalaModule with ScalafixModule {
   def scalaVersion           = "2.13.3"
   override def scalacOptions = Seq("-Ywarn-unused", "-Yrangepos", "-P:semanticdb:synthetics:on")
-  def scalafixIvyDeps        = Agg(ivy"org.scala-lang.modules::scala-collection-migrations:2.1.6")
+  def scalafixIvyDeps        = Agg(ivy"org.scala-lang.modules::scala-collection-migrations:2.2.0")
 }
 
 def verify() =
