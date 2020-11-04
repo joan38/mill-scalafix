@@ -27,7 +27,7 @@ object `mill-scalafix`
       ivy"com.lihaoyi::mill-main:$millVersion",
       ivy"com.lihaoyi::mill-scalalib:$millVersion"
     )
-  val scalafixVersion = "0.9.21"
+  val scalafixVersion = "0.9.23"
   override def ivyDeps =
     super.ivyDeps() ++ Agg(
       ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
