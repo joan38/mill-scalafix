@@ -30,7 +30,7 @@ object `mill-scalafix`
   override def ivyDeps =
     super.ivyDeps() ++ Agg(
       ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
-      ivy"org.scala-lang.modules::scala-collection-compat:2.2.0",
+      ivy"org.scala-lang.modules::scala-collection-compat:2.3.1",
       ivy"org.scala-lang.modules::scala-java8-compat:0.9.1"
     )
 
