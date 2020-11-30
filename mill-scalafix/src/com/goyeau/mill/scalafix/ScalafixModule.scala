@@ -26,7 +26,7 @@ trait ScalafixModule extends ScalaModule {
     T.command {
       ScalafixModule.fixAction(
         T.ctx().log,
-        repositories,
+        repositoriesTask(),
         allSourceFiles().map(_.path),
         localClasspath().map(_.path),
         scalaVersion(),
