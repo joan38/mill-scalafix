@@ -19,8 +19,7 @@ trait ScalafixModule extends ScalaModule {
   def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]
   def scalafixScalaBinaryVersion: T[String] = "2.12"
 
-  /**
-    * Run Scalafix.
+  /** Run Scalafix.
     */
   def fix(args: String*): Command[Unit] =
     T.command {

@@ -5,8 +5,7 @@ import mill.define.Command
 import mill.scalalib.scalafmt.ScalafmtModule
 import scala.annotation.nowarn
 
-/**
-  * Combine Scalafmt and Scalafix together
+/** Combine Scalafmt and Scalafix together
   */
 trait StyleModule extends ScalafmtModule with ScalafixModule {
   @nowarn("msg=pure expression does nothing")
