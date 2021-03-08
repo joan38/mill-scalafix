@@ -13,7 +13,7 @@ import scala.jdk.CollectionConverters._
 
 trait ScalafixModule extends ScalaModule {
   override def scalacPluginIvyDeps: Target[Loose.Agg[Dep]] =
-    super.scalacPluginIvyDeps() ++ Agg(ivy"org.scalameta:::semanticdb-scalac:4.4.0")
+    super.scalacPluginIvyDeps() ++ Agg(ivy"org.scalameta:::semanticdb-scalac:4.4.10")
 
   def scalafixConfig: T[Option[Path]]       = T(None)
   def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]
