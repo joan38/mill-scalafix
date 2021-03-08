@@ -45,6 +45,21 @@ object `mill-scalafix`
       versionControl = VersionControl.github("joan38", "mill-scalafix"),
       developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
     )
+
+  val `semanticdb-scalac` = ivy"org.scalameta:::semanticdb-scalac:4.4.10"
+
+  override def generatedSources = T {
+    val dest = T.ctx.dest
+    os.write(
+      dest / "Versions.scala",
+      s"""package com.goyeau.mill.scalafix
+         |object SemanticdbScalac {
+         |  val version = "${`semanticdb-scalac`.dep.version}"
+         |}
+         |""".stripMargin
+    )
+    super.generatedSources() ++ Seq(PathRef(dest))
+  }
 }
 
 object itest extends MillIntegrationTestModule {
