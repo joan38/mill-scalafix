@@ -3,17 +3,18 @@ package com.goyeau.mill.scalafix
 import coursier.Repository
 import mill.{Agg, T}
 import mill.api.{Logger, Loose, Result}
-import mill.scalalib._
+import mill.scalalib.{Dep, DepSyntax, ScalaModule}
 import mill.define.{Command, Target}
 import os._
 import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError._
+
 import scala.compat.java8.OptionConverters._
 import scala.jdk.CollectionConverters._
 
 trait ScalafixModule extends ScalaModule {
   override def scalacPluginIvyDeps: Target[Loose.Agg[Dep]] =
-    super.scalacPluginIvyDeps() ++ Agg(ivy"org.scalameta:::semanticdb-scalac:${SemanticdbScalac.version}")
+    super.scalacPluginIvyDeps() ++ Agg(ivy"org.scalameta:::semanticdb-scalac:${Versions.semanticdbScalac}")
 
   def scalafixConfig: T[Option[Path]]       = T(None)
   def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]

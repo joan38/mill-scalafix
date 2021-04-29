@@ -20,7 +20,7 @@ object `mill-scalafix`
     with GitVersionedPublishModule {
   override def scalaVersion = "2.13.4"
 
-  lazy val millVersion = "0.9.3"
+  lazy val millVersion = "0.9.5"
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
     ivy"com.lihaoyi::mill-main:$millVersion",
     ivy"com.lihaoyi::mill-scalalib:$millVersion"
@@ -46,15 +46,15 @@ object `mill-scalafix`
       developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
     )
 
-  val `semanticdb-scalac` = ivy"org.scalameta:::semanticdb-scalac:4.4.10"
+  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.10"
 
   override def generatedSources = T {
     val dest = T.ctx.dest
     os.write(
       dest / "Versions.scala",
       s"""package com.goyeau.mill.scalafix
-         |object SemanticdbScalac {
-         |  val version = "${`semanticdb-scalac`.dep.version}"
+         |object Versions {
+         |  val semanticdbScalac = "${semanticdbScalac.dep.version}"
          |}
          |""".stripMargin
     )
