@@ -1,5 +1,5 @@
-import $ivy.`com.goyeau::mill-git:0.2.0`
-import $ivy.`com.goyeau::mill-scalafix:0.2.1`
+import $ivy.`com.goyeau::mill-git:0.2.2`
+import $ivy.`com.goyeau::mill-scalafix:0.2.2`
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:$MILL_VERSION`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.0`
 import $ivy.`io.github.davidgregory084::mill-tpolecat:0.2.0`
@@ -18,9 +18,9 @@ object `mill-scalafix`
     with StyleModule
     with BuildInfo
     with GitVersionedPublishModule {
-  override def scalaVersion = "2.13.4"
+  override def scalaVersion = "2.13.5"
 
-  lazy val millVersion = "0.9.5"
+  lazy val millVersion = "0.9.7"
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
     ivy"com.lihaoyi::mill-main:$millVersion",
     ivy"com.lihaoyi::mill-scalalib:$millVersion"
@@ -28,7 +28,7 @@ object `mill-scalafix`
   val scalafixVersion = "0.9.28"
   override def ivyDeps = super.ivyDeps() ++ Agg(
     ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
-    ivy"org.scala-lang.modules::scala-collection-compat:2.4.3",
+    ivy"org.scala-lang.modules::scala-collection-compat:2.4.4",
     ivy"org.scala-lang.modules::scala-java8-compat:1.0.0"
   )
 
@@ -46,7 +46,7 @@ object `mill-scalafix`
       developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
     )
 
-  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.10"
+  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.19"
 
   override def generatedSources = T {
     val dest = T.ctx.dest
