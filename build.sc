@@ -20,7 +20,7 @@ object `mill-scalafix`
     with GitVersionedPublishModule {
   override def scalaVersion = "2.13.5"
 
-  lazy val millVersion = "0.9.7"
+  lazy val millVersion = "0.9.8"
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
     ivy"com.lihaoyi::mill-main:$millVersion",
     ivy"com.lihaoyi::mill-scalalib:$millVersion"
