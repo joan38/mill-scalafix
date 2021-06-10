@@ -5,6 +5,7 @@ import mill.{Agg, T}
 import mill.api.{Logger, Loose, Result}
 import mill.scalalib.{Dep, DepSyntax, ScalaModule}
 import mill.define.{Command, Target}
+import mill.scalalib.api.Util.isScala3
 import os._
 import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError._
@@ -13,8 +14,12 @@ import scala.compat.java8.OptionConverters._
 import scala.jdk.CollectionConverters._
 
 trait ScalafixModule extends ScalaModule {
-  override def scalacPluginIvyDeps: Target[Loose.Agg[Dep]] =
-    super.scalacPluginIvyDeps() ++ Agg(ivy"org.scalameta:::semanticdb-scalac:${Versions.semanticdbScalac}")
+  override def scalacPluginIvyDeps: Target[Loose.Agg[Dep]] = super.scalacPluginIvyDeps() ++
+    (if (isScala3(scalaVersion())) Agg.empty
+     else Agg(ivy"org.scalameta:::semanticdb-scalac:${Versions.semanticdbScalac}"))
+
+  override def scalacOptions: Target[Seq[String]] = super.scalacOptions() ++
+    (if (isScala3(scalaVersion())) Seq("-Xsemanticdb") else Seq.empty)
 
   def scalafixConfig: T[Option[Path]]       = T(None)
   def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]
