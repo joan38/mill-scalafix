@@ -2,7 +2,7 @@ package com.goyeau.mill.scalafix
 
 import coursier.Repository
 import mill.{Agg, T}
-import mill.api.{Logger, Loose, Result}
+import mill.api.{Logger, Loose, PathRef, Result}
 import mill.scalalib.{Dep, DepSyntax, ScalaModule}
 import mill.define.{Command, Target}
 import mill.scalalib.api.Util.isScala3
@@ -21,9 +21,10 @@ trait ScalafixModule extends ScalaModule {
   override def scalacOptions: Target[Seq[String]] = super.scalacOptions() ++
     (if (isScala3(scalaVersion())) Seq("-Xsemanticdb") else Seq.empty)
 
-  def scalafixConfig: T[Option[Path]]       = T(None)
-  def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]
-  def scalafixScalaBinaryVersion: T[String] = "2.12"
+  def scalafixTargetSourceFiles: T[Seq[PathRef]] = allSourceFiles
+  def scalafixConfig: T[Option[Path]]            = T(None)
+  def scalafixIvyDeps: T[Agg[Dep]]               = Agg.empty[Dep]
+  def scalafixScalaBinaryVersion: T[String]      = "2.12"
 
   /** Run Scalafix.
     */
@@ -32,7 +33,7 @@ trait ScalafixModule extends ScalaModule {
       ScalafixModule.fixAction(
         T.ctx().log,
         repositoriesTask(),
-        allSourceFiles().map(_.path),
+        scalafixTargetSourceFiles().map(_.path),
         localClasspath().map(_.path),
         scalaVersion(),
         scalafixScalaBinaryVersion(),
