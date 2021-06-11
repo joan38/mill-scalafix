@@ -1,15 +1,15 @@
 package com.goyeau.mill.scalafix
 
+import com.goyeau.mill.scalafix.ScalafixModule.{filesToFix, fixAction}
 import coursier.Repository
 import mill.{Agg, T}
-import mill.api.{Logger, Loose, Result}
+import mill.api.{Logger, Loose, PathRef, Result}
 import mill.scalalib.{Dep, DepSyntax, ScalaModule}
 import mill.define.{Command, Target}
 import mill.scalalib.api.Util.isScala3
 import os._
 import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError._
-
 import scala.compat.java8.OptionConverters._
 import scala.jdk.CollectionConverters._
 
@@ -29,10 +29,10 @@ trait ScalafixModule extends ScalaModule {
     */
   def fix(args: String*): Command[Unit] =
     T.command {
-      ScalafixModule.fixAction(
+      fixAction(
         T.ctx().log,
         repositoriesTask(),
-        allSourceFiles().map(_.path),
+        filesToFix(sources()).map(_.path),
         localClasspath().map(_.path),
         scalaVersion(),
         scalafixScalaBinaryVersion(),
@@ -96,4 +96,12 @@ object ScalafixModule {
         Result.Failure(errorMessages.mkString("\n"))
       }
     } else Result.Success(())
+
+  def filesToFix(sources: Seq[PathRef]): Seq[PathRef] =
+    for {
+      pathRef <- sources if os.exists(pathRef.path)
+      file <-
+        if (os.isDir(pathRef.path)) os.walk(pathRef.path).filter(file => os.isFile(file) && (file.ext == "scala"))
+        else Seq(pathRef.path)
+    } yield PathRef(file)
 }
