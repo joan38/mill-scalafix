@@ -10,11 +10,11 @@ object project extends ScalaModule with ScalafixModule {
 }
 
 def verify() =
-    T.command {
-      val fixedScala = read(pwd / "project" / "src" / "Fix.scala")
-      val expected   = """object Fix {
-                       |  def procedure(): Unit = {}
-                       |}
-                       |""".stripMargin
-      assert(fixedScala == expected)
-    }
+  T.command {
+    val fixedScala = read(pwd / "project" / "src" / "Fix.scala")
+    val expected = """object Fix {
+                     |  def procedure(): Unit = {}
+                     |}
+                     |""".stripMargin
+    assert(fixedScala == expected)
+  }
