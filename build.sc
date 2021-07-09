@@ -28,7 +28,7 @@ object `mill-scalafix`
   val scalafixVersion = "0.9.29"
   override def ivyDeps = super.ivyDeps() ++ Agg(
     ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
-    ivy"org.scala-lang.modules::scala-collection-compat:2.4.4",
+    ivy"org.scala-lang.modules::scala-collection-compat:2.5.0",
     ivy"org.scala-lang.modules::scala-java8-compat:1.0.0"
   )
 
