@@ -5,16 +5,16 @@ import mill.scalalib._
 import os._
 
 object project extends ScalaModule with ScalafixModule {
-  def scalaVersion           = "2.13.2"
-  override def scalacOptions = Seq("-Ywarn-unused")
+  def scalaVersion  = "2.13.2"
+  def scalacOptions = Seq("-Ywarn-unused")
 }
 
 def verify() =
-    T.command {
-      val fixedScala = read(pwd / "project" / "src" / "Fix.scala")
-      val expected   = """object Fix {
-                       |  def procedure(): Unit = {}
-                       |}
-                       |""".stripMargin
-      assert(fixedScala == expected)
-    }
+  T.command {
+    val fixedScala = read(pwd / "project" / "src" / "Fix.scala")
+    val expected = """object Fix {
+                     |  def procedure(): Unit = {}
+                     |}
+                     |""".stripMargin
+    assert(fixedScala == expected)
+  }

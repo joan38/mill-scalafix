@@ -1,5 +1,5 @@
 import $ivy.`com.goyeau::mill-git:0.2.2`
-import $ivy.`com.goyeau::mill-scalafix:0.2.2`
+import $ivy.`com.goyeau::mill-scalafix:0.2.4`
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:$MILL_VERSION`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.0`
 import $ivy.`io.github.davidgregory084::mill-tpolecat:0.2.0`
@@ -66,7 +66,7 @@ object itest extends MillIntegrationTestModule {
   def millTestVersion  = `mill-scalafix`.millVersion
   def pluginsUnderTest = Seq(`mill-scalafix`)
   override def testInvocations =
-    Seq(
+    Seq[(PathRef, Seq[TestInvocation.Targets])](
       PathRef(sources().head.path / "fix") -> Seq(
         TestInvocation.Targets(Seq("__.fix")),
         TestInvocation.Targets(Seq("verify"))
