@@ -5,29 +5,29 @@ import mill.scalalib._
 import os._
 
 object project extends ScalaModule with ScalafixModule {
-  def scalaVersion           = "2.13.3"
-  override def scalacOptions = Seq("-Ywarn-unused", "-Yrangepos", "-P:semanticdb:synthetics:on")
-  def scalafixIvyDeps        = Agg(ivy"org.scala-lang.modules::scala-collection-migrations:2.2.0")
+  def scalaVersion    = "2.13.3"
+  def scalacOptions   = Seq("-Ywarn-unused", "-Yrangepos", "-P:semanticdb:synthetics:on")
+  def scalafixIvyDeps = Agg(ivy"org.scala-lang.modules::scala-collection-migrations:2.2.0")
 }
 
 def verify() =
-    T.command {
-      val fixedScala = read(pwd / "project" / "src" / "Fix.scala")
-      val expected = """import scala.language.postfixOps
+  T.command {
+    val fixedScala = read(pwd / "project" / "src" / "Fix.scala")
+    val expected   = """import scala.language.postfixOps
                        |object Tuple2ZippedSrc213 {
                        |  def zipped(xs: List[Int], ys: List[Int]): Unit = {
                        |    xs.lazyZip(ys)
                        |    xs.lazyZip(ys)
                        |    (xs.lazyZip(ys) )
-                       |    ((xs).lazyZip((ys)))
-                       |    xs.lazyZip(
-                       |      ys)
-                       |    /* a *//* b */ xs /* c */.lazyZip(/* d */ ys /* e */)/* f *//* g *//* h */
+                       |    (xs.lazyZip(ys))
+                       |    xs.lazyZip(ys)
+                       |    /* a */
+                       |     /* b */ xs /* c */.lazyZip(/* d */ ys /* e */ ) /* f */  /* g */  /* h */
                        |    coll(1).lazyZip(coll(2))
                        |    List(1, 2, 3).lazyZip(Array(1))
                        |  }
                        |  def coll(x: Int): List[Int] = ???
                        |}
                        |""".stripMargin
-      assert(fixedScala == expected)
-    }
+    assert(fixedScala == expected)
+  }
