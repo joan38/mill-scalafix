@@ -5,7 +5,7 @@ import mill.scalalib._
 import os._
 
 object project extends ScalaModule with ScalafixModule {
-  def scalaVersion  = "2.13.2"
+  def scalaVersion  = "2.13.6"
   def scalacOptions = Seq("-Ywarn-unused")
 }
 

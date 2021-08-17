@@ -18,7 +18,7 @@ object `mill-scalafix`
     with StyleModule
     with BuildInfo
     with GitVersionedPublishModule {
-  override def scalaVersion = "2.13.5"
+  override def scalaVersion = "2.13.6"
 
   lazy val millVersion = "0.9.8"
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
@@ -46,7 +46,7 @@ object `mill-scalafix`
       developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
     )
 
-  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.19"
+  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.27"
 
   override def generatedSources = T {
     val dest = T.ctx.dest
