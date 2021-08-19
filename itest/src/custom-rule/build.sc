@@ -13,21 +13,21 @@ object project extends ScalaModule with ScalafixModule {
 def verify() =
   T.command {
     val fixedScala = read(pwd / "project" / "src" / "Fix.scala")
-    val expected   = """import scala.language.postfixOps
-                       |object Tuple2ZippedSrc213 {
-                       |  def zipped(xs: List[Int], ys: List[Int]): Unit = {
-                       |    xs.lazyZip(ys)
-                       |    xs.lazyZip(ys)
-                       |    (xs.lazyZip(ys) )
-                       |    (xs.lazyZip(ys))
-                       |    xs.lazyZip(ys)
-                       |    /* a */
-                       |     /* b */ xs /* c */.lazyZip(/* d */ ys /* e */ ) /* f */  /* g */  /* h */
-                       |    coll(1).lazyZip(coll(2))
-                       |    List(1, 2, 3).lazyZip(Array(1))
-                       |  }
-                       |  def coll(x: Int): List[Int] = ???
-                       |}
-                       |""".stripMargin
+    val expected = """import scala.language.postfixOps
+                     |object Tuple2ZippedSrc213 {
+                     |  def zipped(xs: List[Int], ys: List[Int]): Unit = {
+                     |    xs.lazyZip(ys)
+                     |    xs.lazyZip(ys)
+                     |    (xs.lazyZip(ys) )
+                     |    (xs.lazyZip(ys))
+                     |    xs.lazyZip(ys)
+                     |    /* a */
+                     |     /* b */ xs /* c */.lazyZip(/* d */ ys /* e */ ) /* f */  /* g */  /* h */
+                     |    coll(1).lazyZip(coll(2))
+                     |    List(1, 2, 3).lazyZip(Array(1))
+                     |  }
+                     |  def coll(x: Int): List[Int] = ???
+                     |}
+                     |""".stripMargin
     assert(fixedScala == expected)
   }
