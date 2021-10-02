@@ -29,7 +29,7 @@ object `mill-scalafix`
   override def ivyDeps = super.ivyDeps() ++ Agg(
     ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
     ivy"org.scala-lang.modules::scala-collection-compat:2.5.0",
-    ivy"org.scala-lang.modules::scala-java8-compat:1.0.0"
+    ivy"org.scala-lang.modules::scala-java8-compat:1.0.1"
   )
 
   override def buildInfoPackageName = Some("com.goyeau.mill.scalafix")
