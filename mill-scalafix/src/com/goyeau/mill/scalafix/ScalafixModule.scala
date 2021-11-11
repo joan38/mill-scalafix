@@ -16,7 +16,7 @@ import scala.jdk.CollectionConverters._
 trait ScalafixModule extends ScalaModule {
   override def scalacPluginIvyDeps: Target[Loose.Agg[Dep]] = super.scalacPluginIvyDeps() ++
     (if (isScala3(scalaVersion())) Agg.empty
-     else Agg(ivy"org.scalameta:::semanticdb-scalac:${Versions.semanticdbScalac}"))
+     else Agg(ivy"org.scalameta:::semanticdb-scalac:${BuildInfo.semanticdbScalac}"))
 
   override def scalacOptions: Target[Seq[String]] = super.scalacOptions() ++
     (if (isScala3(scalaVersion())) Seq("-Xsemanticdb") else Seq.empty)
