@@ -33,7 +33,10 @@ object `mill-scalafix`
   )
 
   override def buildInfoPackageName = Some("com.goyeau.mill.scalafix")
-  override def buildInfoMembers     = Map("scalafixVersion" -> scalafixVersion)
+  override def buildInfoMembers = Map(
+    "scalafixVersion"  -> scalafixVersion,
+    "semanticdbScalac" -> ScalaStewardDummyModule.ivyDeps().items.next().dep.version
+  )
 
   override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
   def pomSettings =
@@ -45,21 +48,13 @@ object `mill-scalafix`
       versionControl = VersionControl.github("joan38", "mill-scalafix"),
       developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
     )
+}
 
-  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.30"
-
-  override def generatedSources = T {
-    val dest = T.ctx.dest
-    os.write(
-      dest / "Versions.scala",
-      s"""package com.goyeau.mill.scalafix
-         |object Versions {
-         |  val semanticdbScalac = "${semanticdbScalac.dep.version}"
-         |}
-         |""".stripMargin
-    )
-    super.generatedSources() ++ Seq(PathRef(dest))
-  }
+/** Dummy module to trigger Scala Stewards updates of the semanticdb-scalac dependency used in the plugin via BuildInfo
+  */
+object ScalaStewardDummyModule extends ScalaModule {
+  def scalaVersion = `mill-scalafix`.scalaVersion
+  def ivyDeps      = Agg(ivy"org.scalameta:::semanticdb-scalac:4.4.30")
 }
 
 object itest extends MillIntegrationTestModule {
