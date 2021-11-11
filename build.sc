@@ -46,7 +46,7 @@ object `mill-scalafix`
       developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
     )
 
-  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.27"
+  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.30"
 
   override def generatedSources = T {
     val dest = T.ctx.dest
