@@ -32,10 +32,12 @@ object `mill-scalafix`
     ivy"org.scala-lang.modules::scala-java8-compat:1.0.2"
   )
 
+  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.30"
+
   override def buildInfoPackageName = Some("com.goyeau.mill.scalafix")
   override def buildInfoMembers = Map(
     "scalafixVersion"  -> scalafixVersion,
-    "semanticdbScalac" -> ScalaStewardDummyModule.ivyDeps().items.next().dep.version
+    "semanticdbScalac" -> semanticdbScalac.dep.version
   )
 
   override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
@@ -54,7 +56,7 @@ object `mill-scalafix`
   */
 object ScalaStewardDummyModule extends ScalaModule {
   def scalaVersion = `mill-scalafix`.scalaVersion
-  def ivyDeps      = Agg(ivy"org.scalameta:::semanticdb-scalac:4.4.30")
+  def ivyDeps      = Agg(`mill-scalafix`.semanticdbScalac)
 }
 
 object itest extends MillIntegrationTestModule {
