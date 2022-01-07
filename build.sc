@@ -9,21 +9,35 @@ import de.tobiasroeser.mill.integrationtest._
 import io.github.davidgregory084.TpolecatModule
 import mill._
 import mill.contrib.buildinfo.BuildInfo
+import mill.scalalib.api.Util.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 
-object `mill-scalafix`
+val millVersions       = Seq("0.9.10", "0.10.0-M5")
+val millBinaryVersions = millVersions.map(scalaNativeBinaryVersion)
+
+def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(
+  millVersion
+)
+
+def millVersion(binaryVersion: String) =
+  millVersions.find(v => millBinaryVersion(v) == binaryVersion).get
+
+object `mill-scalafix` extends Cross[MillScalafixCross](millBinaryVersions: _*)
+class MillScalafixCross(millBinaryVersion: String)
     extends ScalaModule
     with TpolecatModule
     with StyleModule
     with BuildInfo
     with GitVersionedPublishModule {
+  override def millSourcePath = super.millSourcePath / os.up
+  override def scalacOptions =
+    super.scalacOptions().filterNot(opt => millBinaryVersion.startsWith("0.10") && opt == "-Xfatal-warnings")
   override def scalaVersion = "2.13.6"
 
-  lazy val millVersion = "0.9.10"
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
-    ivy"com.lihaoyi::mill-main:$millVersion",
-    ivy"com.lihaoyi::mill-scalalib:$millVersion"
+    ivy"com.lihaoyi::mill-main:${millVersion(millBinaryVersion)}",
+    ivy"com.lihaoyi::mill-scalalib:${millVersion(millBinaryVersion)}"
   )
   val scalafixVersion = "0.9.33"
   override def ivyDeps = super.ivyDeps() ++ Agg(
@@ -55,13 +69,15 @@ object `mill-scalafix`
 /** Dummy module to trigger Scala Stewards updates of the semanticdb-scalac dependency used in the plugin via BuildInfo
   */
 object ScalaStewardDummyModule extends ScalaModule {
-  def scalaVersion = `mill-scalafix`.scalaVersion
-  def ivyDeps      = Agg(`mill-scalafix`.semanticdbScalac)
+  def scalaVersion = `mill-scalafix`(millBinaryVersions.head).scalaVersion
+  def ivyDeps      = Agg(`mill-scalafix`(millBinaryVersions.head).semanticdbScalac)
 }
 
-object itest extends MillIntegrationTestModule {
-  def millTestVersion  = `mill-scalafix`.millVersion
-  def pluginsUnderTest = Seq(`mill-scalafix`)
+object itest extends Cross[ITestCross]("0.9.10", "0.10.0-M5")
+class ITestCross(millVersion: String) extends MillIntegrationTestModule {
+  override def millSourcePath   = super.millSourcePath / os.up
+  override def millTestVersion  = millVersion
+  override def pluginsUnderTest = Seq(`mill-scalafix`(millBinaryVersion(millVersion)))
   override def testInvocations =
     Seq[(PathRef, Seq[TestInvocation.Targets])](
       PathRef(sources().head.path / "fix") -> Seq(
