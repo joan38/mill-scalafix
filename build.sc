@@ -31,6 +31,7 @@ class MillScalafixCross(millBinaryVersion: String)
     with BuildInfo
     with GitVersionedPublishModule {
   override def millSourcePath = super.millSourcePath / os.up
+  override def artifactName = s"mill-scalafix_mill${millBinaryVersion}"
   override def scalacOptions =
     super.scalacOptions().filterNot(opt => millBinaryVersion.startsWith("0.10") && opt == "-Xfatal-warnings")
   override def scalaVersion = "2.13.6"
