@@ -13,12 +13,10 @@ import mill.scalalib.api.Util.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 
-val millVersions       = Seq("0.9.10", "0.10.0-M5")
+val millVersions       = Seq("0.9.12", "0.10.0-M5")
 val millBinaryVersions = millVersions.map(scalaNativeBinaryVersion)
 
-def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(
-  millVersion
-)
+def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion)
 
 def millVersion(binaryVersion: String) =
   millVersions.find(v => millBinaryVersion(v) == binaryVersion).get
@@ -31,7 +29,7 @@ class MillScalafixCross(millBinaryVersion: String)
     with BuildInfo
     with GitVersionedPublishModule {
   override def millSourcePath = super.millSourcePath / os.up
-  override def artifactName = s"mill-scalafix_mill${millBinaryVersion}"
+  override def artifactName   = s"mill-scalafix_mill$millBinaryVersion"
   override def scalacOptions =
     super.scalacOptions().filterNot(opt => millBinaryVersion.startsWith("0.10") && opt == "-Xfatal-warnings")
   override def scalaVersion = "2.13.6"
@@ -40,7 +38,7 @@ class MillScalafixCross(millBinaryVersion: String)
     ivy"com.lihaoyi::mill-main:${millVersion(millBinaryVersion)}",
     ivy"com.lihaoyi::mill-scalalib:${millVersion(millBinaryVersion)}"
   )
-  val scalafixVersion = "0.9.33"
+  val scalafixVersion = "0.9.34"
   override def ivyDeps = super.ivyDeps() ++ Agg(
     ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
     ivy"org.scala-lang.modules::scala-collection-compat:2.6.0",
