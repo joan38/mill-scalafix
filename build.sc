@@ -45,7 +45,7 @@ class MillScalafixCross(millBinaryVersion: String)
     ivy"org.scala-lang.modules::scala-java8-compat:1.0.2"
   )
 
-  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.31"
+  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.4.32"
 
   override def buildInfoPackageName = Some("com.goyeau.mill.scalafix")
   override def buildInfoMembers = Map(
