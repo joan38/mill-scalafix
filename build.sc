@@ -13,7 +13,7 @@ import mill.scalalib.api.Util.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 
-val millVersions       = Seq("0.9.12", "0.10.0-M5")
+val millVersions       = Seq("0.9.12", "0.10.0")
 val millBinaryVersions = millVersions.map(scalaNativeBinaryVersion)
 
 def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion)
@@ -72,7 +72,7 @@ object ScalaStewardDummyModule extends ScalaModule {
   def ivyDeps      = Agg(`mill-scalafix`(millBinaryVersions.head).semanticdbScalac)
 }
 
-object itest extends Cross[ITestCross]("0.9.10", "0.10.0-M5")
+object itest extends Cross[ITestCross]("0.9.10", "0.10.0")
 class ITestCross(millVersion: String) extends MillIntegrationTestModule {
   override def millSourcePath   = super.millSourcePath / os.up
   override def millTestVersion  = millVersion
