@@ -1,6 +1,6 @@
 # mill-scalafix
 
-[![Latest version](https://index.scala-lang.org/joan38/mill-scalafix/mill-scalafix/latest.svg?color=lightgrey)](https://index.scala-lang.org/joan38/mill-scalafix/mill-scalafix)
+![Maven Central](https://img.shields.io/maven-central/v/com.goyeau/mill-scalafix_mill0.10_2.13)
 
 A [scalafix](https://scalacenter.github.io/scalafix) plugin for Mill build tool.
 
