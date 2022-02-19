@@ -11,12 +11,12 @@ A [scalafix](https://scalacenter.github.io/scalafix) plugin for Mill build tool.
 
 *build.sc*:
 ```scala
-import $ivy.`com.goyeau::mill-scalafix_mill0.9:<latest version>`
+import $ivy.`com.goyeau::mill-scalafix::<latest version>`
 import com.goyeau.mill.scalafix.ScalafixModule
 import mill.scalalib._
 
 object project extends ScalaModule with ScalafixModule {
-  def scalaVersion = "2.12.11"
+  def scalaVersion = "2.13.8"
 }
 ```
 
@@ -36,7 +36,7 @@ You're also able to use external Scalafix rules by adding them like the below
 example:
 
 ```scala
-def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:0.4.0")
+def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:0.6.0")
 ```
 
 ### Scalafix Arguments
