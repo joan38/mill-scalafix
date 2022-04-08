@@ -32,7 +32,7 @@ class MillScalafixCross(millVersion: String)
     ivy"com.lihaoyi::mill-main:$millVersion",
     ivy"com.lihaoyi::mill-scalalib:$millVersion"
   )
-  val scalafixVersion = "0.9.34"
+  val scalafixVersion = "0.10.0"
   override def ivyDeps = super.ivyDeps() ++ Agg(
     ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
     ivy"org.scala-lang.modules::scala-collection-compat:2.6.0",
