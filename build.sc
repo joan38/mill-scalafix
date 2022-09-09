@@ -13,7 +13,7 @@ import mill.scalalib.api.Util.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 
-val millVersions                           = Seq("0.10.5", "0.9.12")
+val millVersions                           = Seq("0.10.7")
 def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion)
 
 object `mill-scalafix` extends Cross[MillScalafixCross](millVersions: _*)
@@ -39,12 +39,9 @@ class MillScalafixCross(millVersion: String)
     ivy"org.scala-lang.modules::scala-java8-compat:1.0.2"
   )
 
-  val semanticdbScalac = ivy"org.scalameta:::semanticdb-scalac:4.5.13"
-
   override def buildInfoPackageName = Some("com.goyeau.mill.scalafix")
   override def buildInfoMembers = Map(
-    "scalafixVersion"  -> scalafixVersion,
-    "semanticdbScalac" -> semanticdbScalac.dep.version
+    "scalafixVersion"  -> scalafixVersion
   )
 
   override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
@@ -56,13 +53,6 @@ class MillScalafixCross(millVersion: String)
     versionControl = VersionControl.github("joan38", "mill-scalafix"),
     developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
   )
-}
-
-/** Dummy module to trigger Scala Stewards updates of the semanticdb-scalac dependency used in the plugin via BuildInfo
-  */
-object ScalaStewardDummyModule extends ScalaModule {
-  def scalaVersion = `mill-scalafix`(millVersions.head).scalaVersion
-  def ivyDeps      = Agg(`mill-scalafix`(millVersions.head).semanticdbScalac)
 }
 
 object itest extends Cross[ITestCross](millVersions: _*)
