@@ -1,8 +1,8 @@
 import $ivy.`com.goyeau::mill-git::0.2.3`
-import $ivy.`com.goyeau::mill-scalafix::0.2.8`
+import $ivy.`com.goyeau::mill-scalafix::0.2.10`
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:$MILL_VERSION`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.5.1`
-import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.0`
+import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.1`
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
 import com.goyeau.mill.scalafix.StyleModule
 import de.tobiasroeser.mill.integrationtest._
