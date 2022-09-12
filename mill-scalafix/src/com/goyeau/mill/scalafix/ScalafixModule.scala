@@ -19,8 +19,17 @@ trait ScalafixModule extends ScalaModule {
 
   /** Run Scalafix.
     */
-  def fix(args: String*): Command[Unit] =
-    T.command {
+  def fix(args: String*): Command[Unit] = {
+    val isMillVersionSupported = mill.BuildInfo.millVersion match {
+      case s"$_.$minor.$patchWithSuffix" =>
+        val patch = patchWithSuffix.takeWhile(_.isDigit)
+        minor.toInt >= 10 && patch.toInt >= 6
+      case other =>
+        System.err.println(s"mill-scalafix: Failed to parse Mill $other version. Assuming it's supported.")
+        true
+    }
+
+    if (isMillVersionSupported) T.command {
       fixAction(
         T.ctx().log,
         repositoriesTask(),
@@ -34,6 +43,11 @@ trait ScalafixModule extends ScalaModule {
         args: _*
       )
     }
+    else
+      T.command[Unit] {
+        Result.Failure("Mill version not supported. Please update to Mill 0.10.6+")
+      }
+  }
 }
 
 object ScalafixModule {
