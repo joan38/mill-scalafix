@@ -23,7 +23,7 @@ class MillScalafixCross(millVersion: String)
     with StyleModule
     with BuildInfo
     with GitVersionedPublishModule {
-  override def crossScalaVersion = "2.13.8"
+  override def crossScalaVersion = "2.13.10"
   override def artifactSuffix    = s"_mill${millBinaryVersion(millVersion)}" + super.artifactSuffix()
   override def scalacOptions =
     super.scalacOptions().filterNot(opt => millVersion.startsWith("0.10") && opt == "-Xfatal-warnings")
