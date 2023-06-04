@@ -3,9 +3,9 @@ package com.goyeau.mill.scalafix
 import com.goyeau.mill.scalafix.ScalafixModule.{filesToFix, fixAction}
 import coursier.Repository
 import mill.{Agg, T}
-import mill.api.{Logger, Loose, PathRef, Result}
-import mill.scalalib.{Dep, DepSyntax, ScalaModule}
-import mill.define.{Command, Target}
+import mill.api.{Logger, PathRef, Result}
+import mill.scalalib.{Dep, ScalaModule}
+import mill.define.Command
 import os._
 import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError._
