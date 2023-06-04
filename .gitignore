@@ -101,6 +101,8 @@ MANIFEST
 env/
 venv/
 ENV/
+.metals/
+.vscode/
 
 # BSP
 /.bsp/
