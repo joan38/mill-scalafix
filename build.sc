@@ -13,7 +13,7 @@ import mill.scalalib.api.Util.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 
-val millVersions                           = Seq("0.10.12", "0.11.0-M7")
+val millVersions                           = Seq("0.10.12", "0.11.0")
 def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion)
 
 object `mill-scalafix` extends Cross[MillScalafixCross](millVersions: _*)
@@ -23,7 +23,7 @@ class MillScalafixCross(millVersion: String)
     with StyleModule
     with BuildInfo
     with GitVersionedPublishModule {
-  override def crossScalaVersion = "2.13.10"
+  override def crossScalaVersion = "2.13.11"
   override def artifactSuffix    = s"_mill${millBinaryVersion(millVersion)}" + super.artifactSuffix()
   override def scalacOptions =
     super.scalacOptions().filterNot(opt => millVersion.startsWith("0.10") && opt == "-Xfatal-warnings")
