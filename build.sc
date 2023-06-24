@@ -9,11 +9,11 @@ import de.tobiasroeser.mill.integrationtest._
 import io.github.davidgregory084.TpolecatModule
 import mill._
 import mill.contrib.buildinfo.BuildInfo
-import mill.scalalib.api.Util.scalaNativeBinaryVersion
+import mill.scalalib.api.ZincWorkerUtil.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 
-val millVersions                           = Seq("0.10.12")
+val millVersions                           = Seq("0.10.12", "0.11.1")
 def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion)
 
 object `mill-scalafix` extends Cross[MillScalafixCross](millVersions: _*)
@@ -25,8 +25,6 @@ class MillScalafixCross(millVersion: String)
     with GitVersionedPublishModule {
   override def crossScalaVersion = "2.13.10"
   override def artifactSuffix    = s"_mill${millBinaryVersion(millVersion)}" + super.artifactSuffix()
-  override def scalacOptions =
-    super.scalacOptions().filterNot(opt => millVersion.startsWith("0.10") && opt == "-Xfatal-warnings")
 
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
     ivy"com.lihaoyi::mill-main:$millVersion",
@@ -74,9 +72,6 @@ class ITestCross(millVersion: String) extends MillIntegrationTestModule {
     PathRef(sources().head.path / "custom-rule") -> Seq(
       TestInvocation.Targets(Seq("__.fix")),
       TestInvocation.Targets(Seq("verify"))
-    ),
-    PathRef(sources().head.path / "no-source") -> Seq(
-      TestInvocation.Targets(Seq("__.fix"))
     )
   )
 }

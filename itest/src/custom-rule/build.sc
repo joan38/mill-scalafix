@@ -1,13 +1,13 @@
-import $exec.plugins
+import $file.plugins
 import com.goyeau.mill.scalafix.ScalafixModule
 import mill._
 import mill.scalalib._
 import os._
 
 object project extends ScalaModule with ScalafixModule {
-  def scalaVersion    = "2.13.3"
+  def scalaVersion    = "2.13.10"
   def scalacOptions   = Seq("-Ywarn-unused", "-Yrangepos", "-P:semanticdb:synthetics:on")
-  def scalafixIvyDeps = Agg(ivy"org.scala-lang.modules::scala-collection-migrations:2.2.0")
+  def scalafixIvyDeps = Agg(ivy"org.scala-lang.modules::scala-collection-migrations:2.11.0")
 }
 
 def verify() =
