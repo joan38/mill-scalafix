@@ -3,14 +3,14 @@ package com.goyeau.mill.scalafix
 import com.goyeau.mill.scalafix.ScalafixModule.{filesToFix, fixAction}
 import coursier.Repository
 import mill.{Agg, T}
-import mill.api.{Logger, Loose, PathRef, Result}
-import mill.scalalib.{Dep, DepSyntax, ScalaModule}
-import mill.define.{Command, Target}
-import os._
+import mill.api.{Logger, PathRef, Result}
+import mill.scalalib.{Dep, ScalaModule}
+import mill.define.Command
+import os.*
 import scalafix.interfaces.Scalafix
-import scalafix.interfaces.ScalafixError._
-import scala.compat.java8.OptionConverters._
-import scala.jdk.CollectionConverters._
+import scalafix.interfaces.ScalafixError.*
+import scala.compat.java8.OptionConverters.*
+import scala.jdk.CollectionConverters.*
 
 trait ScalafixModule extends ScalaModule {
   def scalafixConfig: T[Option[Path]]       = T(None)
@@ -19,17 +19,8 @@ trait ScalafixModule extends ScalaModule {
 
   /** Run Scalafix.
     */
-  def fix(args: String*): Command[Unit] = {
-    val isMillVersionSupported = mill.BuildInfo.millVersion match {
-      case s"$_.$minor.$patchWithSuffix" =>
-        val patch = patchWithSuffix.takeWhile(_.isDigit)
-        minor.toInt >= 10 && patch.toInt >= 6
-      case other =>
-        System.err.println(s"mill-scalafix: Failed to parse Mill $other version. Assuming it's supported.")
-        true
-    }
-
-    if (isMillVersionSupported) T.command {
+  def fix(args: String*): Command[Unit] =
+    T.command {
       fixAction(
         T.ctx().log,
         repositoriesTask(),
@@ -40,14 +31,9 @@ trait ScalafixModule extends ScalaModule {
         scalacOptions(),
         scalafixIvyDeps(),
         scalafixConfig(),
-        args: _*
+        args*
       )
     }
-    else
-      T.command[Unit] {
-        Result.Failure("Mill version not supported. Please update to Mill 0.10.6+")
-      }
-  }
 }
 
 object ScalafixModule {

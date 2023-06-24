@@ -1,4 +1,4 @@
-import $exec.plugins
+import $file.plugins
 import com.goyeau.mill.scalafix.ScalafixModule
 import mill.scalalib._
 
