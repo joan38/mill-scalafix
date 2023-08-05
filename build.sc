@@ -1,6 +1,5 @@
 import $ivy.`com.goyeau::mill-git::0.2.5`
 import $ivy.`com.goyeau::mill-scalafix::0.3.1`
-import $ivy.`com.lihaoyi::mill-contrib-buildinfo:$MILL_VERSION`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.7.1`
 import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.2`
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
@@ -8,7 +7,6 @@ import com.goyeau.mill.scalafix.StyleModule
 import de.tobiasroeser.mill.integrationtest._
 import io.github.davidgregory084.TpolecatModule
 import mill._
-import mill.contrib.buildinfo.BuildInfo
 import mill.scalalib.api.ZincWorkerUtil.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
@@ -21,7 +19,6 @@ class MillScalafixCross(millVersion: String)
     extends CrossModuleBase
     with TpolecatModule
     with StyleModule
-    with BuildInfo
     with GitVersionedPublishModule {
   override def crossScalaVersion = "2.13.10"
   override def artifactSuffix    = s"_mill${millBinaryVersion(millVersion)}" + super.artifactSuffix()
@@ -35,11 +32,6 @@ class MillScalafixCross(millVersion: String)
     ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
     ivy"org.scala-lang.modules::scala-collection-compat:2.11.0",
     ivy"org.scala-lang.modules::scala-java8-compat:1.0.2"
-  )
-
-  override def buildInfoPackageName = Some("com.goyeau.mill.scalafix")
-  override def buildInfoMembers = Map(
-    "scalafixVersion" -> scalafixVersion
   )
 
   override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
