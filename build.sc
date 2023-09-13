@@ -20,7 +20,7 @@ class MillScalafixCross(millVersion: String)
     with TpolecatModule
     with StyleModule
     with GitVersionedPublishModule {
-  override def crossScalaVersion = "2.13.10"
+  override def crossScalaVersion = "2.13.12"
   override def artifactSuffix    = s"_mill${millBinaryVersion(millVersion)}" + super.artifactSuffix()
 
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
