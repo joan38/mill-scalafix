@@ -11,7 +11,7 @@ import mill.scalalib.api.ZincWorkerUtil.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 
-val millVersions                           = Seq("0.10.0", "0.11.0") // scala-steward:off
+val millVersions                           = Seq("0.10.6", "0.11.0") // scala-steward:off
 def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion)
 
 object `mill-scalafix` extends Cross[MillScalafixCross](millVersions: _*)
