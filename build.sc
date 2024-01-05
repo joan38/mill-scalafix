@@ -7,6 +7,7 @@ import com.goyeau.mill.scalafix.StyleModule
 import de.tobiasroeser.mill.integrationtest._
 import io.github.davidgregory084.TpolecatModule
 import mill._
+import mill.define.Cross
 import mill.scalalib.api.ZincWorkerUtil.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
@@ -14,12 +15,14 @@ import scalalib._
 val millVersions                           = Seq("0.10.12", "0.11.1")
 def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion)
 
-object `mill-scalafix` extends Cross[MillScalafixCross](millVersions: _*)
-class MillScalafixCross(millVersion: String)
+object `mill-scalafix` extends Cross[MillScalafixCross](millVersions)
+trait MillScalafixCross
     extends CrossModuleBase
     with TpolecatModule
     with StyleModule
-    with GitVersionedPublishModule {
+    with GitVersionedPublishModule
+    with Cross.Module[String] {
+  def millVersion = crossValue
   override def crossScalaVersion = "2.13.10"
   override def artifactSuffix    = s"_mill${millBinaryVersion(millVersion)}" + super.artifactSuffix()
 
@@ -45,9 +48,9 @@ class MillScalafixCross(millVersion: String)
   )
 }
 
-object itest extends Cross[ITestCross](millVersions: _*)
-class ITestCross(millVersion: String) extends MillIntegrationTestModule {
-  override def millSourcePath   = super.millSourcePath / os.up
+object itest extends Cross[ITestCross](millVersions)
+trait ITestCross extends MillIntegrationTestModule with Cross.Module[String] {
+  def millVersion = crossValue
   override def millTestVersion  = millVersion
   override def pluginsUnderTest = Seq(`mill-scalafix`(millVersion))
   override def testInvocations = Seq[(PathRef, Seq[TestInvocation.Targets])](
