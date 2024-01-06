@@ -25,7 +25,7 @@ trait ScalafixModule extends ScalaModule {
         T.ctx().log,
         repositoriesTask(),
         filesToFix(sources()).map(_.path),
-        Seq(semanticDbData().path),
+        classpath = (compileClasspath() ++ localClasspath() ++ Seq(semanticDbData())).iterator.toSeq.map(_.path),
         scalaVersion(),
         scalafixScalaBinaryVersion(),
         scalacOptions(),
