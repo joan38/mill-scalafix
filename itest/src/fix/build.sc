@@ -15,7 +15,7 @@ def verify() =
     val fixedScala = read(pwd / "project" / "src" / "Fix.scala")
     val expected = """object Fix {
                      |  def procedure(): Unit = {}
-                     |  def myComplexMethod: Map[Int, String] = 1.to(10).map(i => i -> i.toString).toMap
+                     |  def myComplexMethod: Map[Int,String] = 1.to(10).map(i => i -> i.toString).toMap
                      |}
                      |""".stripMargin
     assert(fixedScala == expected)
