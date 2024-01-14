@@ -1,5 +1,5 @@
 import $ivy.`com.goyeau::mill-git::0.2.5`
-import $ivy.`com.goyeau::mill-scalafix::0.3.1`
+import $ivy.`com.goyeau::mill-scalafix::0.3.2`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.7.1`
 import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.5`
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
@@ -22,7 +22,7 @@ trait MillScalafixCross
     with StyleModule
     with GitVersionedPublishModule
     with Cross.Module[String] {
-  def millVersion = crossValue
+  def millVersion                = crossValue
   override def crossScalaVersion = "2.13.12"
   override def artifactSuffix    = s"_mill${millBinaryVersion(millVersion)}" + super.artifactSuffix()
 
@@ -50,7 +50,7 @@ trait MillScalafixCross
 
 object itest extends Cross[ITestCross](millVersions)
 trait ITestCross extends MillIntegrationTestModule with Cross.Module[String] {
-  def millVersion = crossValue
+  def millVersion               = crossValue
   override def millTestVersion  = millVersion
   override def pluginsUnderTest = Seq(`mill-scalafix`(millVersion))
   override def testInvocations = Seq[(PathRef, Seq[TestInvocation.Targets])](
