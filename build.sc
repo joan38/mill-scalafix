@@ -12,7 +12,7 @@ import mill.scalalib.api.ZincWorkerUtil.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import scalalib._
 
-val millVersions                           = Seq("0.10.15", "0.11.0")
+val millVersions                           = Seq("0.10.15", "0.11.6")
 def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion)
 
 object `mill-scalafix` extends Cross[MillScalafixCross](millVersions)
@@ -22,7 +22,7 @@ trait MillScalafixCross
     with StyleModule
     with GitVersionedPublishModule
     with Cross.Module[String] {
-  def millVersion = crossValue
+  def millVersion                = crossValue
   override def crossScalaVersion = "2.13.12"
   override def artifactSuffix    = s"_mill${millBinaryVersion(millVersion)}" + super.artifactSuffix()
 
@@ -50,7 +50,7 @@ trait MillScalafixCross
 
 object itest extends Cross[ITestCross](millVersions)
 trait ITestCross extends MillIntegrationTestModule with Cross.Module[String] {
-  def millVersion = crossValue
+  def millVersion               = crossValue
   override def millTestVersion  = millVersion
   override def pluginsUnderTest = Seq(`mill-scalafix`(millVersion))
   override def testInvocations = Seq[(PathRef, Seq[TestInvocation.Targets])](
