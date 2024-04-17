@@ -33,7 +33,7 @@ trait MillScalafixCross
   val scalafixVersion = "0.12.0"
   override def ivyDeps = super.ivyDeps() ++ Agg(
     ivy"ch.epfl.scala:scalafix-interfaces:$scalafixVersion",
-    ivy"org.scala-lang.modules::scala-collection-compat:2.11.0",
+    ivy"org.scala-lang.modules::scala-collection-compat:2.12.0",
     ivy"org.scala-lang.modules::scala-java8-compat:1.0.2"
   )
 
