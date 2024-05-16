@@ -104,3 +104,10 @@ ENV/
 
 # BSP
 /.bsp/
+
+# Visual Studio Code #
+######################
+.vscode
+.bloop
+.metals
+.ammonite
