@@ -5,9 +5,9 @@ import mill.scalalib._
 import os._
 
 object project extends ScalaModule with ScalafixModule {
-  def scalaVersion  = "2.13.12"
+  def scalaVersion               = "2.13.12"
   def scalafixScalaBinaryVersion = mill.scalalib.api.ZincWorkerUtil.scalaBinaryVersion(scalaVersion())
-  def scalacOptions = Seq("-Ywarn-unused")
+  def scalacOptions              = Seq("-Ywarn-unused")
 }
 
 def verify() =
