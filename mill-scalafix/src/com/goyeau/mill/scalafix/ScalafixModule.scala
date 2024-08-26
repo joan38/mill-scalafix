@@ -13,7 +13,7 @@ import scala.compat.java8.OptionConverters.*
 import scala.jdk.CollectionConverters.*
 
 trait ScalafixModule extends ScalaModule {
-  def scalafixConfig: T[Option[Path]]       = T(None)
+  def scalafixConfig: T[Option[os.Path]]       = T(None)
   def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]
   def scalafixScalaBinaryVersion: T[String] = "2.12"
 
@@ -41,26 +41,26 @@ object ScalafixModule {
   def fixAction(
       log: Logger,
       repositories: Seq[Repository],
-      sources: Seq[Path],
-      classpath: Seq[Path],
+      sources: Seq[os.Path],
+      classpath: Seq[os.Path],
       scalaVersion: String,
       scalaBinaryVersion: String,
       scalacOptions: Seq[String],
       scalafixIvyDeps: Agg[Dep],
-      scalafixConfig: Option[Path],
+      scalafixConfig: Option[os.Path],
       args: String*
   ): Result[Unit] = fixAction(log, repositories, sources, classpath, scalaVersion, scalaBinaryVersion, scalacOptions, scalafixIvyDeps, scalafixConfig, args, os.pwd)
   
   def fixAction(
       log: Logger,
       repositories: Seq[Repository],
-      sources: Seq[Path],
-      classpath: Seq[Path],
+      sources: Seq[os.Path],
+      classpath: Seq[os.Path],
       scalaVersion: String,
       scalaBinaryVersion: String,
       scalacOptions: Seq[String],
       scalafixIvyDeps: Agg[Dep],
-      scalafixConfig: Option[Path],
+      scalafixConfig: Option[os.Path],
       args: Seq[String],
       wd: os.Path
   ): Result[Unit] =
@@ -69,7 +69,7 @@ object ScalafixModule {
         .fetchAndClassloadInstance(scalaBinaryVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
         .newArguments()
         .withParsedArguments(args.asJava)
-        .withWorkingDirectory(pwd.toNIO)
+        .withWorkingDirectory(wd.toNIO)
         .withConfig(scalafixConfig.map(_.toNIO).asJava)
         .withClasspath(classpath.map(_.toNIO).asJava)
         .withScalaVersion(scalaVersion)
