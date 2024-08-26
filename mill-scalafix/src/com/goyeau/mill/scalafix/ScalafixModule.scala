@@ -6,7 +6,7 @@ import mill.{Agg, T}
 import mill.api.{Logger, PathRef, Result}
 import mill.scalalib.{Dep, ScalaModule}
 import mill.define.Command
-import os.*
+
 import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError.*
 import scala.compat.java8.OptionConverters.*
@@ -31,7 +31,8 @@ trait ScalafixModule extends ScalaModule {
         scalacOptions(),
         scalafixIvyDeps(),
         scalafixConfig(),
-        args*
+        args,
+        T.workspace
       )
     }
 }
@@ -48,6 +49,20 @@ object ScalafixModule {
       scalafixIvyDeps: Agg[Dep],
       scalafixConfig: Option[Path],
       args: String*
+  ): Result[Unit] = fixAction(log, repositories, sources, classpath, scalaVersion, scalaBinaryVersion, scalacOptions, scalafixIvyDeps, scalafixConfig, args, os.pwd)
+  
+  def fixAction(
+      log: Logger,
+      repositories: Seq[Repository],
+      sources: Seq[Path],
+      classpath: Seq[Path],
+      scalaVersion: String,
+      scalaBinaryVersion: String,
+      scalacOptions: Seq[String],
+      scalafixIvyDeps: Agg[Dep],
+      scalafixConfig: Option[Path],
+      args: Seq[String],
+      wd: os.Path
   ): Result[Unit] =
     if (sources.nonEmpty) {
       val scalafix = Scalafix
