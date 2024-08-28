@@ -13,7 +13,7 @@ import scala.compat.java8.OptionConverters.*
 import scala.jdk.CollectionConverters.*
 
 trait ScalafixModule extends ScalaModule {
-  def scalafixConfig: T[Option[os.Path]]       = T(None)
+  def scalafixConfig: T[Option[os.Path]]    = T(None)
   def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]
   def scalafixScalaBinaryVersion: T[String] = "2.12"
 
@@ -49,8 +49,20 @@ object ScalafixModule {
       scalafixIvyDeps: Agg[Dep],
       scalafixConfig: Option[os.Path],
       args: String*
-  ): Result[Unit] = fixAction(log, repositories, sources, classpath, scalaVersion, scalaBinaryVersion, scalacOptions, scalafixIvyDeps, scalafixConfig, args, os.pwd)
-  
+  ): Result[Unit] = fixAction(
+    log,
+    repositories,
+    sources,
+    classpath,
+    scalaVersion,
+    scalaBinaryVersion,
+    scalacOptions,
+    scalafixIvyDeps,
+    scalafixConfig,
+    args,
+    os.pwd
+  )
+
   def fixAction(
       log: Logger,
       repositories: Seq[Repository],
