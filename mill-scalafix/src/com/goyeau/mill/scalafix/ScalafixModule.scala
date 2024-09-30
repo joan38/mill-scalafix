@@ -77,8 +77,7 @@ object ScalafixModule {
   ): Result[Unit] =
     if (sources.nonEmpty) {
       val scalafix = ScalafixCache
-        .getOrElseCreate(scalaVersion, repositories)
-        .newArguments()
+        .getOrElseCreate(scalaVersion, repositories, scalafixIvyDeps)
         .withParsedArguments(args.asJava)
         .withWorkingDirectory(wd.toNIO)
         .withConfig(scalafixConfig.map(_.toNIO).asJava)
@@ -86,11 +85,6 @@ object ScalafixModule {
         .withScalaVersion(scalaVersion)
         .withScalacOptions(scalacOptions.asJava)
         .withPaths(sources.map(_.toNIO).asJava)
-        .withToolClasspath(
-          Seq.empty.asJava,
-          scalafixIvyDeps.map(CoursierUtils.toCoordinates).iterator.toSeq.asJava,
-          repositories.map(CoursierUtils.toApiRepository).asJava
-        )
 
       log.info(s"Rewriting and linting ${sources.size} Scala sources against ${scalafix.rulesThatWillRun.size} rules")
       val errors = scalafix.run()
