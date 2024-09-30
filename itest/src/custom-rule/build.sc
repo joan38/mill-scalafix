@@ -5,9 +5,9 @@ import mill.scalalib._
 import os._
 
 object project extends ScalaModule with ScalafixModule {
-  def scalaVersion    = "2.13.12"
+  def scalaVersion    = "2.12.17"
   def semanticDbEnablePluginScalacOptions = super.semanticDbEnablePluginScalacOptions() ++ Seq("-P:semanticdb:synthetics:on")
-  def scalafixIvyDeps = Agg(ivy"org.scala-lang.modules::scala-collection-migrations:2.11.0")
+  def scalafixIvyDeps = Agg(ivy"org.scala-lang.modules::scala-collection-migrations:2.12.0")
 }
 
 def verify() =

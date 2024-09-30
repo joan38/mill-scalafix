@@ -9,12 +9,14 @@ import mill.define.Command
 
 import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError.*
+
 import scala.compat.java8.OptionConverters.*
 import scala.jdk.CollectionConverters.*
 
 trait ScalafixModule extends ScalaModule {
-  def scalafixConfig: T[Option[os.Path]]    = T(None)
-  def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]
+  def scalafixConfig: T[Option[os.Path]] = T(None)
+  def scalafixIvyDeps: T[Agg[Dep]]       = Agg.empty[Dep]
+  @deprecated("Scalafix now follows scalaVersion", since = "0.4.2")
   def scalafixScalaBinaryVersion: T[String] = "2.12"
 
   /** Run Scalafix.
@@ -27,7 +29,6 @@ trait ScalafixModule extends ScalaModule {
         filesToFix(sources()).map(_.path),
         classpath = (compileClasspath() ++ localClasspath() ++ Seq(semanticDbData())).iterator.toSeq.map(_.path),
         scalaVersion(),
-        scalafixScalaBinaryVersion(),
         scalacOptions(),
         scalafixIvyDeps(),
         scalafixConfig(),
@@ -38,6 +39,7 @@ trait ScalafixModule extends ScalaModule {
 }
 
 object ScalafixModule {
+  @deprecated("Use overload without scalaBinaryVersion and with wd instead", since = "0.4.2")
   def fixAction(
       log: Logger,
       repositories: Seq[Repository],
@@ -55,7 +57,6 @@ object ScalafixModule {
     sources,
     classpath,
     scalaVersion,
-    scalaBinaryVersion,
     scalacOptions,
     scalafixIvyDeps,
     scalafixConfig,
@@ -69,7 +70,6 @@ object ScalafixModule {
       sources: Seq[os.Path],
       classpath: Seq[os.Path],
       scalaVersion: String,
-      scalaBinaryVersion: String,
       scalacOptions: Seq[String],
       scalafixIvyDeps: Agg[Dep],
       scalafixConfig: Option[os.Path],
@@ -78,7 +78,7 @@ object ScalafixModule {
   ): Result[Unit] =
     if (sources.nonEmpty) {
       val scalafix = Scalafix
-        .fetchAndClassloadInstance(scalaBinaryVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
+        .fetchAndClassloadInstance(scalaVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
         .newArguments()
         .withParsedArguments(args.asJava)
         .withWorkingDirectory(wd.toNIO)
@@ -124,4 +124,30 @@ object ScalafixModule {
         if (os.isDir(pathRef.path)) os.walk(pathRef.path).filter(file => os.isFile(file) && (file.ext == "scala"))
         else Seq(pathRef.path)
     } yield PathRef(file)
+
+  @deprecated("Use overload without scalaBinaryVersion instead", since = "0.4.2")
+  def fixAction(
+      log: Logger,
+      repositories: Seq[Repository],
+      sources: Seq[os.Path],
+      classpath: Seq[os.Path],
+      scalaVersion: String,
+      scalaBinaryVersion: String,
+      scalacOptions: Seq[String],
+      scalafixIvyDeps: Agg[Dep],
+      scalafixConfig: Option[os.Path],
+      args: Seq[String],
+      wd: os.Path
+  ): Result[Unit] = fixAction(
+    log,
+    repositories,
+    sources,
+    classpath,
+    scalaVersion,
+    scalacOptions,
+    scalafixIvyDeps,
+    scalafixConfig,
+    args,
+    wd
+  )
 }

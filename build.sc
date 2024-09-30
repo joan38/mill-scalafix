@@ -58,6 +58,14 @@ trait ITestCross extends MillIntegrationTestModule with Cross.Module[String] {
       TestInvocation.Targets(Seq("__.fix")),
       TestInvocation.Targets(Seq("verify"))
     ),
+    PathRef(sources().head.path / "fix-2.12") -> Seq(
+      TestInvocation.Targets(Seq("__.fix")),
+      TestInvocation.Targets(Seq("verify"))
+    ),
+    PathRef(sources().head.path / "fix-3.5") -> Seq(
+      TestInvocation.Targets(Seq("__.fix")),
+      TestInvocation.Targets(Seq("verify"))
+    ),
     PathRef(sources().head.path / "check") -> Seq(
       TestInvocation.Targets(Seq("__.fix", "--check"))
     ),
