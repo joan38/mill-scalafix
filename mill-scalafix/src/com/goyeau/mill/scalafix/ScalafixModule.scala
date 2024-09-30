@@ -110,6 +110,7 @@ object ScalafixModule {
             "A Scalafix test error was reported. Run `fix` without `--check` or `--diff` to fix the error"
           case LinterError  => "A Scalafix linter error was reported"
           case NoFilesError => "No files were provided to Scalafix so nothing happened"
+          case NoRulesError => "No Scalafix rules were found. Make sure a `rules` set is defined in .scalafix.conf"
           case _            => "Something unexpected happened running Scalafix"
         }
         Result.Failure(errorMessages.mkString("\n"))
