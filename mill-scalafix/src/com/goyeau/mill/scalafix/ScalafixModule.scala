@@ -7,7 +7,6 @@ import mill.api.{Logger, PathRef, Result}
 import mill.scalalib.{Dep, ScalaModule}
 import mill.define.Command
 
-import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError.*
 
 import scala.compat.java8.OptionConverters.*
@@ -77,8 +76,8 @@ object ScalafixModule {
       wd: os.Path
   ): Result[Unit] =
     if (sources.nonEmpty) {
-      val scalafix = Scalafix
-        .fetchAndClassloadInstance(scalaVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
+      val scalafix = ScalafixCache
+        .getOrElseCreate(scalaVersion, repositories)
         .newArguments()
         .withParsedArguments(args.asJava)
         .withWorkingDirectory(wd.toNIO)
