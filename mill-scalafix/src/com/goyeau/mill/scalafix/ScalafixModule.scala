@@ -9,12 +9,15 @@ import mill.define.Command
 
 import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError.*
+
+import scala.annotation.nowarn
 import scala.compat.java8.OptionConverters.*
 import scala.jdk.CollectionConverters.*
 
 trait ScalafixModule extends ScalaModule {
-  def scalafixConfig: T[Option[os.Path]]    = T(None)
-  def scalafixIvyDeps: T[Agg[Dep]]          = Agg.empty[Dep]
+  def scalafixConfig: T[Option[os.Path]] = T(None)
+  def scalafixIvyDeps: T[Agg[Dep]]       = Agg.empty[Dep]
+  @deprecated("Scalafix now follows scalaVersion", since = "0.4.2")
   def scalafixScalaBinaryVersion: T[String] = "2.12"
 
   /** Run Scalafix.
@@ -27,7 +30,7 @@ trait ScalafixModule extends ScalaModule {
         filesToFix(sources()).map(_.path),
         classpath = (compileClasspath() ++ localClasspath() ++ Seq(semanticDbData())).iterator.toSeq.map(_.path),
         scalaVersion(),
-        scalafixScalaBinaryVersion(),
+        scalafixScalaBinaryVersion(): @nowarn("cat=deprecation"),
         scalacOptions(),
         scalafixIvyDeps(),
         scalafixConfig(),
@@ -63,6 +66,7 @@ object ScalafixModule {
     os.pwd
   )
 
+  @nowarn("msg=parameter scalaBinaryVersion in method fixAction is never used")
   def fixAction(
       log: Logger,
       repositories: Seq[Repository],
@@ -78,7 +82,7 @@ object ScalafixModule {
   ): Result[Unit] =
     if (sources.nonEmpty) {
       val scalafix = Scalafix
-        .fetchAndClassloadInstance(scalaBinaryVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
+        .fetchAndClassloadInstance(scalaVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
         .newArguments()
         .withParsedArguments(args.asJava)
         .withWorkingDirectory(wd.toNIO)
