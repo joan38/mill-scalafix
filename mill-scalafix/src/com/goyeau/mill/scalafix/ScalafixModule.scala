@@ -10,7 +10,6 @@ import mill.define.Command
 import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError.*
 
-import scala.annotation.nowarn
 import scala.compat.java8.OptionConverters.*
 import scala.jdk.CollectionConverters.*
 
@@ -30,7 +29,6 @@ trait ScalafixModule extends ScalaModule {
         filesToFix(sources()).map(_.path),
         classpath = (compileClasspath() ++ localClasspath() ++ Seq(semanticDbData())).iterator.toSeq.map(_.path),
         scalaVersion(),
-        scalafixScalaBinaryVersion(): @nowarn("cat=deprecation"),
         scalacOptions(),
         scalafixIvyDeps(),
         scalafixConfig(),
@@ -41,6 +39,7 @@ trait ScalafixModule extends ScalaModule {
 }
 
 object ScalafixModule {
+  @deprecated("Use overload without scalaBinaryVersion and with wd instead", since = "0.4.2")
   def fixAction(
       log: Logger,
       repositories: Seq[Repository],
@@ -58,7 +57,6 @@ object ScalafixModule {
     sources,
     classpath,
     scalaVersion,
-    scalaBinaryVersion,
     scalacOptions,
     scalafixIvyDeps,
     scalafixConfig,
@@ -66,14 +64,12 @@ object ScalafixModule {
     os.pwd
   )
 
-  @nowarn("msg=parameter scalaBinaryVersion in method fixAction is never used")
   def fixAction(
       log: Logger,
       repositories: Seq[Repository],
       sources: Seq[os.Path],
       classpath: Seq[os.Path],
       scalaVersion: String,
-      scalaBinaryVersion: String,
       scalacOptions: Seq[String],
       scalafixIvyDeps: Agg[Dep],
       scalafixConfig: Option[os.Path],
@@ -128,4 +124,30 @@ object ScalafixModule {
         if (os.isDir(pathRef.path)) os.walk(pathRef.path).filter(file => os.isFile(file) && (file.ext == "scala"))
         else Seq(pathRef.path)
     } yield PathRef(file)
+
+  @deprecated("Use overload without scalaBinaryVersion instead", since = "0.4.2")
+  def fixAction(
+      log: Logger,
+      repositories: Seq[Repository],
+      sources: Seq[os.Path],
+      classpath: Seq[os.Path],
+      scalaVersion: String,
+      scalaBinaryVersion: String,
+      scalacOptions: Seq[String],
+      scalafixIvyDeps: Agg[Dep],
+      scalafixConfig: Option[os.Path],
+      args: Seq[String],
+      wd: os.Path
+  ): Result[Unit] = fixAction(
+    log,
+    repositories,
+    sources,
+    classpath,
+    scalaVersion,
+    scalacOptions,
+    scalafixIvyDeps,
+    scalafixConfig,
+    args,
+    wd
+  )
 }
