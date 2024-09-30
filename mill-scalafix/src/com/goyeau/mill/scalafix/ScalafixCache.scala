@@ -13,12 +13,14 @@ private[scalafix] object ScalafixCache {
   private val cache = new ConcurrentHashMap[(String, Seq[Repository]), SoftReference[Scalafix]]
 
   def getOrElseCreate(scalaVersion: String, repositories: Seq[Repository]) =
-    cache.get((scalaVersion, repositories)) match {
-      case SoftReference(value) => value
-      case _ =>
-        val newResult =
-          Scalafix.fetchAndClassloadInstance(scalaVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
-        cache.put((scalaVersion, repositories), SoftReference(newResult))
-        newResult
-    }
+    cache.compute(
+      (scalaVersion, repositories),
+      {
+        case (_, v @ SoftReference(_)) => v
+        case _ =>
+          SoftReference(
+            Scalafix.fetchAndClassloadInstance(scalaVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
+          )
+      }
+    )()
 }
