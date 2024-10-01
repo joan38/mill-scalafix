@@ -7,7 +7,6 @@ import mill.api.{Logger, PathRef, Result}
 import mill.scalalib.{Dep, ScalaModule}
 import mill.define.Command
 
-import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixError.*
 
 import scala.compat.java8.OptionConverters.*
@@ -77,9 +76,8 @@ object ScalafixModule {
       wd: os.Path
   ): Result[Unit] =
     if (sources.nonEmpty) {
-      val scalafix = Scalafix
-        .fetchAndClassloadInstance(scalaVersion, repositories.map(CoursierUtils.toApiRepository).asJava)
-        .newArguments()
+      val scalafix = ScalafixCache
+        .getOrElseCreate(scalaVersion, repositories, scalafixIvyDeps)
         .withParsedArguments(args.asJava)
         .withWorkingDirectory(wd.toNIO)
         .withConfig(scalafixConfig.map(_.toNIO).asJava)
@@ -87,11 +85,6 @@ object ScalafixModule {
         .withScalaVersion(scalaVersion)
         .withScalacOptions(scalacOptions.asJava)
         .withPaths(sources.map(_.toNIO).asJava)
-        .withToolClasspath(
-          Seq.empty.asJava,
-          scalafixIvyDeps.map(CoursierUtils.toCoordinates).iterator.toSeq.asJava,
-          repositories.map(CoursierUtils.toApiRepository).asJava
-        )
 
       log.info(s"Rewriting and linting ${sources.size} Scala sources against ${scalafix.rulesThatWillRun.size} rules")
       val errors = scalafix.run()
