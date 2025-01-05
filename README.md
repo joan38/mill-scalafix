@@ -1,6 +1,6 @@
 # mill-scalafix
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.goyeau/mill-scalafix_mill0.11_2.13)](https://mvnrepository.com/artifact/com.goyeau/mill-scalafix_mill0.11_2.13)
+[![Maven Central](https://img.shields.io/maven-central/v/com.goyeau/mill-scalafix_mill0.11_2.13)](https://mvnrepository.com/artifact/com.goyeau/mill-scalafix_mill0.11)
 
 A [scalafix](https://scalacenter.github.io/scalafix) plugin for Mill build tool.
 
@@ -16,7 +16,7 @@ import com.goyeau.mill.scalafix.ScalafixModule
 import mill.scalalib._
 
 object project extends ScalaModule with ScalafixModule {
-  def scalaVersion = "2.13.8"
+  def scalaVersion = "2.13.15"
 }
 ```
 

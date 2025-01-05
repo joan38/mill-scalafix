@@ -1,0 +1,67 @@
+import $ivy.`com.goyeau::mill-git::0.2.6`
+import $ivy.`com.goyeau::mill-scalafix::0.4.2`
+import $ivy.`org.typelevel::scalac-options:0.1.7`
+import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
+import com.goyeau.mill.scalafix.StyleModule
+import mill._
+import mill.Task.dest
+import mill.scalalib._
+import mill.scalalib.api.ZincWorkerUtil.scalaNativeBinaryVersion
+import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
+import org.typelevel.scalacoptions.ScalacOptions._
+import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
+
+val millVersions = Seq("0.12.0")
+def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion) match {
+  case "0.12"  => "0.11"
+  case version => version
+}
+
+object `mill-scalafix` extends Cross[MillScalafixCross](millVersions)
+trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule {
+  val millVersion           = crossValue
+  override def scalaVersion = "2.13.15"
+  override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
+    ScalaVersion.unsafeFromString(scalaVersion()),
+    ScalacOptions.default + source3 ++ fatalWarningOptions
+  )
+
+  override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
+    ivy"com.lihaoyi::mill-main:$millVersion",
+    ivy"com.lihaoyi::mill-scalalib:$millVersion"
+  )
+  override def ivyDeps = super.ivyDeps() ++ Agg(
+    ivy"ch.epfl.scala:scalafix-interfaces:0.13.0",
+    ivy"org.scala-lang.modules::scala-java8-compat:1.0.2"
+  )
+
+  object test extends ScalaTests with TestModule.Munit {
+    override def ivyDeps = Agg(
+      ivy"org.scalameta::munit::1.0.3",
+      ivy"com.lihaoyi::mill-testkit:$millVersion"
+    )
+    override def forkEnv = Map("MILL_EXECUTABLE_PATH" -> millExecutable.assembly().path.toString)
+
+    // Create a Mill executable configured for testing our plugin
+    object millExecutable extends JavaModule {
+      override def ivyDeps   = Agg(ivy"com.lihaoyi:mill-dist:$millVersion")
+      override def mainClass = Some("mill.runner.client.MillClientMain")
+      override def resources = T {
+        val p = dest / MillScalafixCross.this.artifactId()
+        os.write(p, MillScalafixCross.this.localClasspath().map(_.path).mkString("\n"), createFolders = true)
+        Seq(PathRef(dest))
+      }
+    }
+  }
+
+  override def artifactName   = s"mill-scalafix_mill${millBinaryVersion(millVersion)}"
+  override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
+  def pomSettings = PomSettings(
+    description = "A Scalafix plugin for Mill build tool",
+    organization = "com.goyeau",
+    url = "https://github.com/joan38/mill-scalafix",
+    licenses = Seq(License.MIT),
+    versionControl = VersionControl.github("joan38", "mill-scalafix"),
+    developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
+  )
+}

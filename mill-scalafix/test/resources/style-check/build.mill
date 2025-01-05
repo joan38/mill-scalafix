@@ -1,0 +1,9 @@
+import $ivy.`com.goyeau::mill-scalafix::0.4.2`
+import com.goyeau.mill.scalafix.StyleModule
+import mill._
+import mill.scalalib._
+
+object project extends ScalaModule with StyleModule {
+  def scalaVersion  = "3.5.2"
+  def scalacOptions = Seq("-Wunused:all")
+}
