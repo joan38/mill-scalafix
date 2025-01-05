@@ -84,4 +84,10 @@ class FixIntegrationTests extends FunSuite {
                      |""".stripMargin
     assertEquals(fixedScala, expected)
   }
+
+  test("fix on empty project should work") {
+    val tester = Tester.create(os.rel / "empty")
+    val result = tester.eval(Seq("__.fix"))
+    assert(result.isSuccess, result.err)
+  }
 }

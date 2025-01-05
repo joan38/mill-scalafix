@@ -1,0 +1,7 @@
+import $ivy.`com.goyeau::mill-scalafix::0.4.2`
+import com.goyeau.mill.scalafix.ScalafixModule
+import mill.scalalib.SbtModule
+
+object project extends SbtModule with ScalafixModule {
+  def scalaVersion = "2.13.15"
+}
