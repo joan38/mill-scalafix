@@ -1,3 +1,0 @@
-object Fix {
-  def procedure() {}
-}
