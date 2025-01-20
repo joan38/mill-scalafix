@@ -7,25 +7,22 @@ import coursier.core.Authentication
 import mill.scalalib.{CrossVersion, Dep}
 
 object CoursierUtils {
-  def toApiRepository(repo: Repository): Option[coursierapi.Repository] =
+  def toApiRepository(repo: Repository): coursierapi.Repository =
     repo match {
       case mvn: MavenRepository =>
         val credentialsOpt = mvn.authentication.map(toApiCredentials)
-        val apiRepo = coursierapi.MavenRepository
+        coursierapi.MavenRepository
           .of(mvn.root)
           .withCredentials(credentialsOpt.orNull)
-        Some(apiRepo)
       case ivy: IvyRepository =>
         val credentialsOpt = ivy.authentication.map(toApiCredentials)
         val mdPatternOpt   = ivy.metadataPatternOpt.map(_.string)
-        val apiRepo = coursierapi.IvyRepository
+        coursierapi.IvyRepository
           .of(ivy.pattern.string)
           .withMetadataPattern(mdPatternOpt.orNull)
           .withCredentials(credentialsOpt.orNull)
-        Some(apiRepo)
-      case _ =>
-        // non-standard repository, ignoring it
-        None
+      case other =>
+        throw new Exception(s"Unrecognized repository: " + other)
     }
 
   def toApiCredentials(auth: Authentication): coursierapi.Credentials =
