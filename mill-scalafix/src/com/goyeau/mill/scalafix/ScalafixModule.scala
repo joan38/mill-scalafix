@@ -2,7 +2,7 @@ package com.goyeau.mill.scalafix
 
 import com.goyeau.mill.scalafix.ScalafixModule.{filesToFix, fixAction}
 import coursier.Repository
-import mill.{Agg, T}
+import mill.{Agg, T, Task}
 import mill.api.{Logger, PathRef, Result}
 import mill.scalalib.{Dep, ScalaModule}
 import mill.define.Command
@@ -15,6 +15,24 @@ import scala.jdk.CollectionConverters.*
 trait ScalafixModule extends ScalaModule {
   def scalafixConfig: T[Option[os.Path]] = T(None)
   def scalafixIvyDeps: T[Agg[Dep]]       = Agg.empty[Dep]
+
+  /** Override this to filter out repositories that don't need to be passed to scalafix
+    *
+    * Repositories passed to scalafix need to be converted to the coursier-interface API (coursierapi.*). This can be an
+    * issue for non-Maven or Ivy repositories. Overriding this task and filtering those repositories out allows to work
+    * around that.
+    */
+  def scalafixRepositories: Task[Seq[Repository]] = Task.Anon {
+    repositoriesTask().filter {
+      case repo if repo.getClass.getName == "mill.scalalib.JavaModule$InternalRepo" =>
+        // Change to this when bumping to Mill 0.13.x:
+        // case _: mill.scalalib.JavaModule.InternalRepo =>
+        // no need to pass Mill's internal repository to scalafix
+        false
+      case _ => true
+    }
+  }
+
   @deprecated("Scalafix now follows scalaVersion", since = "0.4.2")
   def scalafixScalaBinaryVersion: T[String] = "2.12"
 
@@ -24,7 +42,7 @@ trait ScalafixModule extends ScalaModule {
     T.command {
       fixAction(
         T.ctx().log,
-        repositoriesTask(),
+        scalafixRepositories(),
         filesToFix(sources()).map(_.path),
         classpath = (compileClasspath() ++ localClasspath() ++ Seq(semanticDbData())).iterator.toSeq.map(_.path),
         scalaVersion(),
