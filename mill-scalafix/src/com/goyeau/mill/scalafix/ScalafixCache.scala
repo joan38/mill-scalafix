@@ -21,7 +21,7 @@ private[scalafix] object ScalafixCache {
   private val scalafixArgumentsCache =
     new Cache[(String, Seq[Repository], Agg[Dep]), ScalafixArguments](createFunction = {
       case (scalaVersion, repositories, scalafixIvyDeps) =>
-        val repos = repositories.map(CoursierUtils.toApiRepository).asJava
+        val repos = repositories.flatMap(CoursierUtils.toApiRepository).asJava
         val deps  = scalafixIvyDeps.map(CoursierUtils.toCoordinates).iterator.toSeq.asJava
         scalafixCache
           .getOrElseCreate((scalaVersion, repos))
