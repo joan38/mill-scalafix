@@ -25,13 +25,14 @@ trait ScalafixModule extends ScalaModule {
   def scalafixRepositories: Task[Seq[Repository]] = Task.Anon {
     repositoriesTask().filter {
       case repo if repo.getClass.getName == "mill.scalalib.JavaModule$InternalRepo" =>
-        // Change to this when bumping to Mill > 0.12.5:
+        // Change to this when bumping to Mill 0.13.x:
         // case _: mill.scalalib.JavaModule.InternalRepo =>
         // no need to pass Mill's internal repository to scalafix
         false
       case _ => true
     }
   }
+
   @deprecated("Scalafix now follows scalaVersion", since = "0.4.2")
   def scalafixScalaBinaryVersion: T[String] = "2.12"
 
