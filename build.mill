@@ -31,7 +31,7 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
 
   object test extends ScalaTests with TestModule.Munit {
     override def ivyDeps = Agg(
-      ivy"org.scalameta::munit::1.0.4",
+      ivy"org.scalameta::munit::1.1.0",
       ivy"com.lihaoyi::mill-testkit:$millVersion"
     )
     override def forkEnv = Map("MILL_EXECUTABLE_PATH" -> millExecutable.assembly().path.toString)
