@@ -3,8 +3,8 @@ object Tuple2ZippedSrc213 {
   def zipped(xs: List[Int], ys: List[Int]): Unit = {
     (xs, ys).zipped
     (xs, ys).zipped
-    ((xs, ys) zipped)
-    ((xs, ys).zipped)
+    (xs, ys).zipped
+    (xs, ys).zipped
     (xs, ys).zipped
     /* a */
     ( /* b */ xs /* c */, /* d */ ys /* e */ ) /* f */ . /* g */ zipped /* h */
