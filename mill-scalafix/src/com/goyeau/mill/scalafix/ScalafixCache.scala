@@ -1,6 +1,5 @@
 package com.goyeau.mill.scalafix
 
-import com.goyeau.mill.scalafix.CoursierUtils
 import coursier.core.Repository
 import mill.Agg
 import mill.scalalib.Dep

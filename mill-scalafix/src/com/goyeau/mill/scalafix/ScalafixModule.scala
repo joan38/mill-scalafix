@@ -2,10 +2,9 @@ package com.goyeau.mill.scalafix
 
 import com.goyeau.mill.scalafix.ScalafixModule.{filesToFix, fixAction}
 import coursier.Repository
-import mill.{Agg, T, Task}
+import mill.{Agg, Command, T, Task}
 import mill.api.{Logger, PathRef, Result}
 import mill.scalalib.{Dep, ScalaModule}
-import mill.define.Command
 
 import scalafix.interfaces.ScalafixError.*
 
@@ -39,7 +38,7 @@ trait ScalafixModule extends ScalaModule {
   /** Run Scalafix.
     */
   def fix(args: String*): Command[Unit] =
-    T.command {
+    Task.Command {
       fixAction(
         T.ctx().log,
         scalafixRepositories(),
