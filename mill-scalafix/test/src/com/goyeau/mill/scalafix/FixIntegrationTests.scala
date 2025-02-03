@@ -66,21 +66,9 @@ class FixIntegrationTests extends FunSuite {
     assert(result.isSuccess, result.err)
 
     val fixedScala = os.read(tester.workspacePath / "project" / "src" / "Fix.scala")
-    val expected = """import scala.language.postfixOps
-                     |object Tuple2ZippedSrc213 {
-                     |  def zipped(xs: List[Int], ys: List[Int]): Unit = {
-                     |    xs.lazyZip(ys)
-                     |    xs.lazyZip(ys)
-                     |    (xs.lazyZip(ys) )
-                     |    (xs.lazyZip(ys))
-                     |    xs.lazyZip(ys)
-                     |    /* a */
-                     |     /* b */ xs /* c */.lazyZip(/* d */ ys /* e */ ) /* f */  /* g */  /* h */
-                     |    coll(1).lazyZip(coll(2))
-                     |    List(1, 2, 3).lazyZip(Array(1))
-                     |  }
-                     |  def coll(x: Int): List[Int] = ???
+    val expected = """object Custom {
                      |}
+                     |// v1 SyntacticRule!
                      |""".stripMargin
     assertEquals(fixedScala, expected)
   }
