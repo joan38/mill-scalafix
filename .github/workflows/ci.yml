@@ -20,7 +20,7 @@ jobs:
       - name: Checks
         run: |
           git config --global user.name "CI"
-          ./mill __.checkStyle + __[0.12.0].test + __.docJar + __.publishLocal
+          ./mill __.checkStyle + __[0.12.8].test + __.docJar + __.publishLocal
       - name: Publish
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'release'
         run: |
