@@ -27,7 +27,7 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
     ivy"com.lihaoyi::mill-scalalib:$millVersion"
   )
   override def ivyDeps = super.ivyDeps() ++ Agg(
-    ivy"ch.epfl.scala:scalafix-interfaces:0.14.0",
+    ivy"ch.epfl.scala:scalafix-interfaces:0.14.2",
     ivy"org.scala-lang.modules::scala-java8-compat:1.0.2"
   )
 
