@@ -1,24 +1,23 @@
-import $ivy.`com.goyeau::mill-git::0.2.7`
-import $ivy.`com.goyeau::mill-scalafix::0.5.0`
+import $repo.`https://oss.sonatype.org/content/repositories/snapshots`
+import $ivy.`com.goyeau::mill-git::0.2.7-8-118f733-SNAPSHOT`
+import $ivy.`com.goyeau::mill-scalafix::0.5.1-1-e3aa1ee-SNAPSHOT`
 import $ivy.`org.typelevel::scalac-options:0.1.7`
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
 import com.goyeau.mill.scalafix.StyleModule
-import mill._
+import mill.*
 import mill.Task.dest
-import mill.scalalib._
+import mill.define.Cross
+import mill.scalalib.*
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
-import org.typelevel.scalacoptions.ScalacOptions._
+import org.typelevel.scalacoptions.ScalacOptions.*
 import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
 
 object `mill-scalafix` extends Cross[MillScalafixCross]("0.12.0", "0.13.0-M0-93-a6992e")
-trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule {
+trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule:
   val millVersion = crossValue
-
-  override def scalaVersion = millVersion match {
+  override def scalaVersion = millVersion match
     case millVersion if millVersion.startsWith("0.12") => "2.13.16"
     case millVersion if millVersion.startsWith("0.13") => "3.6.3"
-  }
-
   override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
     ScalaVersion.unsafeFromString(scalaVersion()),
     ScalacOptions.default + source3 ++ fatalWarningOptions
@@ -33,7 +32,7 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
     ivy"org.scala-lang.modules::scala-java8-compat:1.0.2"
   )
 
-  object test extends ScalaTests with TestModule.Munit {
+  object test extends ScalaTests with TestModule.Munit:
     override def ivyDeps = Agg(
       ivy"org.scalameta::munit::1.1.0",
       ivy"com.lihaoyi::mill-testkit:$millVersion"
@@ -41,16 +40,14 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
     override def forkEnv = Map("MILL_EXECUTABLE_PATH" -> millExecutable.assembly().path.toString)
 
     // Create a Mill executable configured for testing our plugin
-    object millExecutable extends JavaModule {
+    object millExecutable extends JavaModule:
       override def ivyDeps   = Agg(ivy"com.lihaoyi:mill-dist:$millVersion")
       override def mainClass = Some("mill.runner.client.MillClientMain")
-      override def resources = T {
+      override def resources = Task:
         val p = dest / MillScalafixCross.this.artifactId()
         os.write(p, MillScalafixCross.this.localClasspath().map(_.path).mkString("\n"), createFolders = true)
         Seq(PathRef(dest))
-      }
-    }
-  }
+  end test
 
   override def artifactName   = s"mill-scalafix_mill${millBinaryVersion(millVersion)}"
   override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
@@ -62,10 +59,9 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
     versionControl = VersionControl.github("joan38", "mill-scalafix"),
     developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
   )
-}
+end MillScalafixCross
 
-def millBinaryVersion(millVersion: String) = millVersion match {
+def millBinaryVersion(millVersion: String) = millVersion match
   case version if version.startsWith("0.12") => "0.11" // 0.12.x is binary compatible with 0.11.x
   case version if version.startsWith("0.13") => "0.13.0-M0"
   case _ => throw new IllegalArgumentException(s"Unsupported Mill version: $millVersion")
-}
