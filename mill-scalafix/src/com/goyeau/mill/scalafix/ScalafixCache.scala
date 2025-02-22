@@ -7,7 +7,7 @@ import scalafix.interfaces.Scalafix
 import scalafix.interfaces.ScalafixArguments
 
 import java.util.concurrent.ConcurrentHashMap
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 import scala.ref.SoftReference
 
 private[scalafix] object ScalafixCache {

@@ -1,7 +1,7 @@
 package com.goyeau.mill.scalafix
 
-import mill.Task
 import mill.Command
+import mill.Task
 import mill.scalalib.scalafmt.ScalafmtModule
 
 /** Combine Scalafmt and Scalafix together

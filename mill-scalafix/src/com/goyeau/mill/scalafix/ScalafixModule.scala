@@ -1,11 +1,17 @@
 package com.goyeau.mill.scalafix
 
-import com.goyeau.mill.scalafix.ScalafixModule.{filesToFix, fixAction}
+import com.goyeau.mill.scalafix.ScalafixModule.filesToFix
+import com.goyeau.mill.scalafix.ScalafixModule.fixAction
 import coursier.Repository
-import mill.{Agg, Command, T, Task}
-import mill.api.{Logger, PathRef, Result}
-import mill.scalalib.{Dep, ScalaModule}
-
+import mill.Agg
+import mill.Command
+import mill.T
+import mill.Task
+import mill.api.Logger
+import mill.api.PathRef
+import mill.api.Result
+import mill.scalalib.Dep
+import mill.scalalib.ScalaModule
 import scalafix.interfaces.ScalafixError.*
 
 import scala.compat.java8.OptionConverters.*

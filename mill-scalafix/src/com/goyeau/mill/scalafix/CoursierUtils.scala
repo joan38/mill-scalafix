@@ -1,10 +1,11 @@
 package com.goyeau.mill.scalafix
 
 import coursier.Repository
+import coursier.core.Authentication
 import coursier.ivy.IvyRepository
 import coursier.maven.MavenRepository
-import coursier.core.Authentication
-import mill.scalalib.{CrossVersion, Dep}
+import mill.scalalib.CrossVersion
+import mill.scalalib.Dep
 
 object CoursierUtils {
   def toApiRepository(repo: Repository): coursierapi.Repository =
@@ -22,7 +23,7 @@ object CoursierUtils {
           .withMetadataPattern(mdPatternOpt.orNull)
           .withCredentials(credentialsOpt.orNull)
       case other =>
-        throw new Exception(s"Unrecognized repository: " + other)
+        throw new Exception(s"Unrecognized repository: $other")
     }
 
   def toApiCredentials(auth: Authentication): coursierapi.Credentials =
