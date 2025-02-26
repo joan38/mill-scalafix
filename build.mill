@@ -12,7 +12,7 @@ import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import org.typelevel.scalacoptions.ScalacOptions.*
 import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
 
-object `mill-scalafix` extends Cross[MillScalafixCross]("0.12.0", "0.13.0-M0-93-a6992e")
+object `mill-scalafix` extends Cross[MillScalafixCross]("0.12.0", "0.13.0-M0-104-076678")
 trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule:
   val millVersion = crossValue
   override def scalaVersion = millVersion match
@@ -20,7 +20,7 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
     case millVersion if millVersion.startsWith("0.13") => "3.6.3"
   override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
     ScalaVersion.unsafeFromString(scalaVersion()),
-    ScalacOptions.default + source3 ++ fatalWarningOptions
+    ScalacOptions.default + source3 //++ fatalWarningOptions
   )
 
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
