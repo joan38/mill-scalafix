@@ -12,7 +12,7 @@ import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import org.typelevel.scalacoptions.ScalacOptions.*
 import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
 
-object `mill-scalafix` extends Cross[MillScalafixCross]("0.12.0", "0.13.0-M0-104-076678")
+object `mill-scalafix` extends Cross[MillScalafixCross]("0.12.0", "0.13.0-M0-174-bdd60a")
 trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule:
   val millVersion = crossValue
   override def scalaVersion = millVersion match
