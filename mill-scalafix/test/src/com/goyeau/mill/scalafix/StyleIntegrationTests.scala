@@ -1,8 +1,11 @@
 package com.goyeau.mill.scalafix
 
 import munit.FunSuite
+import scala.concurrent.duration.*
 
 class StyleIntegrationTests extends FunSuite {
+  override val munitTimeout: Duration = 1.minute
+
   test("style should fix and format the code") {
     val tester = Tester.create(os.rel / "style")
     val result = tester.eval(Seq("project.style"))

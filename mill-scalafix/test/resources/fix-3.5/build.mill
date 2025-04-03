@@ -1,4 +1,5 @@
-import $ivy.`com.goyeau::mill-scalafix::0.5.1`
+import $repo.`https://oss.sonatype.org/content/repositories/snapshots`
+import $ivy.`com.goyeau::mill-scalafix::0.5.1-10-7c22ece-SNAPSHOT`
 import com.goyeau.mill.scalafix.ScalafixModule
 import mill._
 import mill.scalalib._
