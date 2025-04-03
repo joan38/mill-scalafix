@@ -1,6 +1,6 @@
 import $repo.`https://oss.sonatype.org/content/repositories/snapshots`
-import $ivy.`com.goyeau::mill-git::0.2.7-14-e02397f-SNAPSHOT`
-import $ivy.`com.goyeau::mill-scalafix::0.5.1-8-5c0974d-SNAPSHOT`
+import $ivy.`com.goyeau::mill-git::0.2.7-15-733a3c7-SNAPSHOT`
+import $ivy.`com.goyeau::mill-scalafix::0.5.1-10-7c22ece-SNAPSHOT`
 import $ivy.`org.typelevel::scalac-options:0.1.7`
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
 import com.goyeau.mill.scalafix.StyleModule
