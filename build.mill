@@ -1,6 +1,6 @@
 import $repo.`https://oss.sonatype.org/content/repositories/snapshots`
-import $ivy.`com.goyeau::mill-git::0.2.7-8-118f733-SNAPSHOT`
-import $ivy.`com.goyeau::mill-scalafix::0.5.1-1-e3aa1ee-SNAPSHOT`
+import $ivy.`com.goyeau::mill-git::0.2.7-14-e02397f-SNAPSHOT`
+import $ivy.`com.goyeau::mill-scalafix::0.5.1-8-5c0974d-SNAPSHOT`
 import $ivy.`org.typelevel::scalac-options:0.1.7`
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
 import com.goyeau.mill.scalafix.StyleModule
@@ -12,7 +12,7 @@ import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import org.typelevel.scalacoptions.ScalacOptions.*
 import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
 
-object `mill-scalafix` extends Cross[MillScalafixCross]("0.12.0", "0.13.0-M0-174-bdd60a")
+object `mill-scalafix` extends Cross[MillScalafixCross]("0.12.0", "0.13.0-M1")
 trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule:
   val millVersion = crossValue
   override def scalaVersion = millVersion match
@@ -63,5 +63,5 @@ end MillScalafixCross
 
 def millBinaryVersion(millVersion: String) = millVersion match
   case version if version.startsWith("0.12") => "0.11" // 0.12.x is binary compatible with 0.11.x
-  case version if version.startsWith("0.13") => "0.13.0-M0"
+  case version if version.startsWith("0.13") => "0.13.0-M1"
   case _ => throw IllegalArgumentException(s"Unsupported Mill version: $millVersion")
