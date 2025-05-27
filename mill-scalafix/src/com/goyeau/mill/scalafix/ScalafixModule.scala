@@ -5,20 +5,20 @@ import com.goyeau.mill.scalafix.ScalafixModule.fixAction
 import coursier.Repository
 import mill.Agg
 import mill.Command
+import mill.PathRef
 import mill.T
 import mill.Task
 import mill.api.Logger
-import mill.api.PathRef
 import mill.api.Result
 import mill.scalalib.Dep
 import mill.scalalib.ScalaModule
 import scalafix.interfaces.ScalafixError.*
 
-import scala.compat.java8.OptionConverters.*
 import scala.jdk.CollectionConverters.*
+import scala.jdk.OptionConverters.*
 
 trait ScalafixModule extends ScalaModule {
-  def scalafixConfig: T[Option[os.Path]] = T(None)
+  def scalafixConfig: T[Option[os.Path]] = Task(None)
   def scalafixIvyDeps: T[Agg[Dep]]       = Agg.empty[Dep]
 
   /** Override this to filter out repositories that don't need to be passed to scalafix
@@ -46,7 +46,7 @@ trait ScalafixModule extends ScalaModule {
   def fix(args: String*): Command[Unit] =
     Task.Command {
       fixAction(
-        T.ctx().log,
+        Task.ctx().log,
         scalafixRepositories(),
         filesToFix(sources()).map(_.path),
         classpath = (compileClasspath() ++ localClasspath() ++ Seq(semanticDbData())).iterator.toSeq.map(_.path),
@@ -55,7 +55,7 @@ trait ScalafixModule extends ScalaModule {
         scalafixIvyDeps(),
         scalafixConfig(),
         args,
-        T.workspace
+        Task.workspace
       )
     }
 }
@@ -103,7 +103,7 @@ object ScalafixModule {
         .getOrElseCreate(scalaVersion, repositories, scalafixIvyDeps)
         .withParsedArguments(args.asJava)
         .withWorkingDirectory(wd.toNIO)
-        .withConfig(scalafixConfig.map(_.toNIO).asJava)
+        .withConfig(scalafixConfig.map(_.toNIO).toJava)
         .withClasspath(classpath.map(_.toNIO).asJava)
         .withScalaVersion(scalaVersion)
         .withScalacOptions(scalacOptions.asJava)
@@ -116,7 +116,7 @@ object ScalafixModule {
         val errorMessages = errors.map {
           case ParseError => "A source file failed to be parsed"
           case CommandLineError =>
-            scalafix.validate().asScala.fold("A command-line argument was parsed incorrectly")(_.getMessage)
+            scalafix.validate().toScala.fold("A command-line argument was parsed incorrectly")(_.getMessage)
           case MissingSemanticdbError =>
             "A semantic rewrite was run on a source file that has no associated META-INF/semanticdb/.../*.semanticdb"
           case StaleSemanticdbError =>

@@ -12,24 +12,30 @@ import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import org.typelevel.scalacoptions.ScalacOptions.*
 import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
 
-object `mill-scalafix` extends Cross[MillScalafixCross]("0.12.0", "0.13.0-M1")
+object `mill-scalafix` extends Cross[MillScalafixCross]("1.0.0-RC1", "0.12.0")
 trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule:
   val millVersion = crossValue
   override def scalaVersion = millVersion match
     case millVersion if millVersion.startsWith("0.12") => "2.13.16"
-    case millVersion if millVersion.startsWith("0.13") => "3.6.3"
+    case millVersion if millVersion.startsWith("1.0")  => "3.7.0"
   override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
     ScalaVersion.unsafeFromString(scalaVersion()),
-    ScalacOptions.default + source3 //++ fatalWarningOptions
+    ScalacOptions.default + source3 // ++ fatalWarningOptions Reenable this once we drop support for Scala 2/0.12.x
   )
 
-  override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
-    ivy"com.lihaoyi::mill-main:$millVersion",
-    ivy"com.lihaoyi::mill-scalalib:$millVersion"
-  )
+  override def compileIvyDeps = super.compileIvyDeps() ++ (millVersion match
+    case version if version.startsWith("1.0") =>
+      Agg(
+        ivy"com.lihaoyi::mill-libs-main:$millVersion",
+        ivy"com.lihaoyi::mill-libs-scalalib-api:$millVersion"
+      )
+    case _ =>
+      Agg(
+        ivy"com.lihaoyi::mill-main:$millVersion",
+        ivy"com.lihaoyi::mill-scalalib:$millVersion"
+      ))
   override def ivyDeps = super.ivyDeps() ++ Agg(
-    ivy"ch.epfl.scala:scalafix-interfaces:0.14.2",
-    ivy"org.scala-lang.modules::scala-java8-compat:1.0.2"
+    ivy"ch.epfl.scala:scalafix-interfaces:0.14.2"
   )
 
   object test extends ScalaTests with TestModule.Munit:
@@ -41,12 +47,10 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
 
     // Create a Mill executable configured for testing our plugin
     object millExecutable extends JavaModule:
-      override def ivyDeps   = Agg(ivy"com.lihaoyi:mill-dist:$millVersion")
-      override def mainClass = Some("mill.runner.client.MillClientMain")
-      override def resources = Task:
-        val p = dest / MillScalafixCross.this.artifactId()
-        os.write(p, MillScalafixCross.this.localClasspath().map(_.path).mkString("\n"), createFolders = true)
-        Seq(PathRef(dest))
+      override def ivyDeps = millVersion match
+        case version if version.startsWith("1.0") => Agg(ivy"com.lihaoyi:mill-runner-launcher_3:$millVersion")
+        case _                                    => Agg(ivy"com.lihaoyi:mill-dist:$millVersion")
+      override def mainClass = Some("mill.launcher.MillLauncherMain")
   end test
 
   override def artifactName   = s"mill-scalafix_mill${millBinaryVersion(millVersion)}"
@@ -63,5 +67,5 @@ end MillScalafixCross
 
 def millBinaryVersion(millVersion: String) = millVersion match
   case version if version.startsWith("0.12") => "0.11" // 0.12.x is binary compatible with 0.11.x
-  case version if version.startsWith("0.13") => "0.13.0-M1"
+  case version if version.startsWith("1.0")  => "1"
   case _ => throw IllegalArgumentException(s"Unsupported Mill version: $millVersion")

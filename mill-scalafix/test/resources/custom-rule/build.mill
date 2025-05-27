@@ -1,11 +1,11 @@
-import $repo.`https://oss.sonatype.org/content/repositories/snapshots`
-import $ivy.`com.goyeau::mill-scalafix::0.5.1-10-7c22ece-SNAPSHOT`
+//| repositories: [https://oss.sonatype.org/content/repositories/snapshots]
+//| mvnDeps:
+//| - com.goyeau::mill-scalafix::0.5.1-14-4d3f5ea-SNAPSHOT
 import com.goyeau.mill.scalafix.ScalafixModule
-import mill._
-import mill.scalalib._
+import mill.*
+import mill.scalalib.*
 
-object project extends ScalaModule with ScalafixModule {
-  def scalaVersion    = "2.12.17"
+object project extends ScalaModule with ScalafixModule:
+  def scalaVersion    = "2.12.20"
   def semanticDbEnablePluginScalacOptions = super.semanticDbEnablePluginScalacOptions() ++ Seq("-P:semanticdb:synthetics:on")
-  def scalafixIvyDeps = Agg(ivy"ch.epfl.scala::example-scalafix-rule:4.0.0")
-}
+  def scalafixIvyDeps = Seq(mvn"ch.epfl.scala::example-scalafix-rule:4.0.0")
