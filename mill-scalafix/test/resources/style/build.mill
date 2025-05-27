@@ -1,10 +1,10 @@
-import $repo.`https://oss.sonatype.org/content/repositories/snapshots`
-import $ivy.`com.goyeau::mill-scalafix::0.5.1-10-7c22ece-SNAPSHOT`
+//| repositories: [https://oss.sonatype.org/content/repositories/snapshots]
+//| mvnDeps:
+//| - com.goyeau::mill-scalafix::0.5.1-14-4d3f5ea-SNAPSHOT
 import com.goyeau.mill.scalafix.StyleModule
-import mill._
-import mill.scalalib._
+import mill.*
+import mill.scalalib.*
 
-object project extends ScalaModule with StyleModule {
+object project extends ScalaModule with StyleModule:
   def scalaVersion  = "3.5.2"
   def scalacOptions = Seq("-Wunused:all")
-}
