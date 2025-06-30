@@ -67,5 +67,6 @@ end MillScalafixCross
 
 def millBinaryVersion(millVersion: String) = millVersion match
   case version if version.startsWith("0.12") => "0.11" // 0.12.x is binary compatible with 0.11.x
-  case version if version.startsWith("1.0")  => "1"
+  case version if version.startsWith("1.0.0-RC1")  => version
+  case version if version.startsWith("1.")  => "1"
   case _ => throw IllegalArgumentException(s"Unsupported Mill version: $millVersion")
