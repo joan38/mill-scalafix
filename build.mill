@@ -13,8 +13,12 @@ import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import org.typelevel.scalacoptions.ScalacOptions.*
 import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
 
-object `mill-scalafix` extends Cross[MillScalafixCross]("1.0.0-RC2", "0.12.0")
-trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule with SonatypeCentralPublishModule:
+object `mill-scalafix` extends Cross[MillScalafixCross]("1.0.0")
+trait MillScalafixCross
+    extends Cross.Module[String]
+    with StyleModule
+    with GitVersionedPublishModule
+    with SonatypeCentralPublishModule:
   val millVersion = crossValue
   override def scalaVersion = millVersion match
     case millVersion if millVersion.startsWith("0.12") => "2.13.16"
@@ -24,17 +28,9 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
     ScalacOptions.default + source3 // ++ fatalWarningOptions Reenable this once we drop support for Scala 2/0.12.x
   )
 
-  override def compileMvnDeps = super.compileMvnDeps() ++ (millVersion match
-    case version if version.startsWith("1.0") =>
-      Seq(
-        mvn"com.lihaoyi::mill-libs-main:$millVersion",
-        mvn"com.lihaoyi::mill-libs-scalalib-api:$millVersion"
-      )
-    case _ =>
-      Seq(
-        mvn"com.lihaoyi::mill-main:$millVersion",
-        mvn"com.lihaoyi::mill-scalalib:$millVersion"
-      ))
+  override def compileMvnDeps = super.compileMvnDeps() ++ Seq(
+    mvn"com.lihaoyi::mill-libs-scalalib:$millVersion"
+  )
   override def mvnDeps = super.mvnDeps() ++ Seq(
     mvn"ch.epfl.scala:scalafix-interfaces:0.14.2"
   )
@@ -48,9 +44,7 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
 
     // Create a Mill executable configured for testing our plugin
     object millExecutable extends JavaModule:
-      override def mvnDeps = millVersion match
-        case version if version.startsWith("1.0") => Seq(mvn"com.lihaoyi:mill-runner-launcher_3:$millVersion")
-        case _                                    => Seq(mvn"com.lihaoyi:mill-dist:$millVersion")
+      override def mvnDeps   = Seq(mvn"com.lihaoyi:mill-runner-launcher_3:$millVersion")
       override def mainClass = Some("mill.launcher.MillLauncherMain")
   end test
 
@@ -67,7 +61,6 @@ trait MillScalafixCross extends Cross.Module[String] with StyleModule with GitVe
 end MillScalafixCross
 
 def millBinaryVersion(millVersion: String) = millVersion match
-  case version if version.startsWith("0.12")     => "0.11" // 0.12.x is binary compatible with 0.11.x
-  case version if version.startsWith("1.0.0-RC") => version
-  case version if version.startsWith("1.")       => "1"
+  case version if version.startsWith("0.12") => "0.11" // 0.12.x is binary compatible with 0.11.x
+  case version if version.startsWith("1.")   => "1"
   case _ => throw IllegalArgumentException(s"Unsupported Mill version: $millVersion")

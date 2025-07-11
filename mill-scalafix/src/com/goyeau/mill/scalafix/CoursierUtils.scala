@@ -4,7 +4,7 @@ import coursier.Repository
 import coursier.core.Authentication
 import coursier.ivy.IvyRepository
 import coursier.maven.MavenRepository
-import mill.scalalib.CrossVersion
+import mill.api.CrossVersion
 import mill.scalalib.Dep
 
 object CoursierUtils {
