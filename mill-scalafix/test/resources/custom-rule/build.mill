@@ -1,6 +1,6 @@
 //| repositories: [https://oss.sonatype.org/content/repositories/snapshots]
 //| mvnDeps:
-//| - com.goyeau::mill-scalafix::0.5.1-14-4d3f5ea-SNAPSHOT
+//| - com.goyeau::mill-scalafix::0.5.1-16-faa7c63-SNAPSHOT
 import com.goyeau.mill.scalafix.ScalafixModule
 import mill.*
 import mill.scalalib.*

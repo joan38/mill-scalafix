@@ -3,11 +3,11 @@ package com.goyeau.mill.scalafix
 import com.goyeau.mill.scalafix.ScalafixModule.filesToFix
 import com.goyeau.mill.scalafix.ScalafixModule.fixAction
 import coursier.Repository
-import mill.Agg
 import mill.Command
 import mill.PathRef
 import mill.T
 import mill.Task
+import mill.api.BuildCtx
 import mill.api.Logger
 import mill.api.Result
 import mill.scalalib.Dep
@@ -19,7 +19,7 @@ import scala.jdk.OptionConverters.*
 
 trait ScalafixModule extends ScalaModule {
   def scalafixConfig: T[Option[os.Path]] = Task(None)
-  def scalafixIvyDeps: T[Agg[Dep]]       = Agg.empty[Dep]
+  def scalafixIvyDeps: T[Seq[Dep]]       = Seq.empty[Dep]
 
   /** Override this to filter out repositories that don't need to be passed to scalafix
     *
@@ -55,7 +55,7 @@ trait ScalafixModule extends ScalaModule {
         scalafixIvyDeps(),
         scalafixConfig(),
         args,
-        Task.workspace
+        BuildCtx.workspaceRoot
       )
     }
 }
@@ -70,7 +70,7 @@ object ScalafixModule {
       scalaVersion: String,
       scalaBinaryVersion: String,
       scalacOptions: Seq[String],
-      scalafixIvyDeps: Agg[Dep],
+      scalafixIvyDeps: Seq[Dep],
       scalafixConfig: Option[os.Path],
       args: String*
   ): Result[Unit] = fixAction(
@@ -93,7 +93,7 @@ object ScalafixModule {
       classpath: Seq[os.Path],
       scalaVersion: String,
       scalacOptions: Seq[String],
-      scalafixIvyDeps: Agg[Dep],
+      scalafixIvyDeps: Seq[Dep],
       scalafixConfig: Option[os.Path],
       args: Seq[String],
       wd: os.Path
@@ -150,7 +150,7 @@ object ScalafixModule {
       scalaVersion: String,
       scalaBinaryVersion: String,
       scalacOptions: Seq[String],
-      scalafixIvyDeps: Agg[Dep],
+      scalafixIvyDeps: Seq[Dep],
       scalafixConfig: Option[os.Path],
       args: Seq[String],
       wd: os.Path
