@@ -7,9 +7,9 @@ import coursier.maven.MavenRepository
 import mill.api.CrossVersion
 import mill.scalalib.Dep
 
-object CoursierUtils {
+object CoursierUtils:
   def toApiRepository(repo: Repository): coursierapi.Repository =
-    repo match {
+    repo match
       case mvn: MavenRepository =>
         val credentialsOpt = mvn.authentication.map(toApiCredentials)
         coursierapi.MavenRepository
@@ -24,18 +24,15 @@ object CoursierUtils {
           .withCredentials(credentialsOpt.orNull)
       case other =>
         throw new Exception(s"Unrecognized repository: $other")
-    }
 
   def toApiCredentials(auth: Authentication): coursierapi.Credentials =
     coursierapi.Credentials.of(auth.userOpt.getOrElse(""), auth.passwordOpt.getOrElse(""))
 
   def toCoordinates(dep: Dep): String =
-    dep.cross match {
+    dep.cross match
       case CrossVersion.Constant(value, _) =>
         s"${dep.dep.module.organization.value}:${dep.dep.module.name.value}$value:${dep.dep.versionConstraint.asString}"
       case CrossVersion.Binary(_) =>
         s"${dep.dep.module.organization.value}::${dep.dep.module.name.value}:${dep.dep.versionConstraint.asString}"
       case CrossVersion.Full(_) =>
         s"${dep.dep.module.organization.value}:::${dep.dep.module.name.value}:${dep.dep.versionConstraint.asString}"
-    }
-}
