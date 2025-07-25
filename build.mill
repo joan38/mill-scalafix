@@ -1,15 +1,17 @@
+//| mill-version: 1.0.1-native
+//| mill-jvm-version: 20
 //| repositories:
 //| - https://central.sonatype.com/repository/maven-snapshots
 //| - https://oss.sonatype.org/content/repositories/snapshots
 //| mvnDeps:
-//| - com.goyeau::mill-git::0.2.7-16-788323f-SNAPSHOT
-//| - com.goyeau::mill-scalafix::0.5.1-13-c3d3c8d-SNAPSHOT
+//| - com.goyeau::mill-git::0.3.0
+//| - com.goyeau::mill-scalafix::0.6.0
 //| - org.typelevel::scalac-options:0.1.7
+
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
 import com.goyeau.mill.scalafix.StyleModule
 import mill.*
-import mill.Task.dest
-import mill.define.Cross
+import mill.api.Cross
 import mill.scalalib.*
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import org.typelevel.scalacoptions.ScalacOptions.*
@@ -22,12 +24,10 @@ trait MillScalafixCross
     with GitVersionedPublishModule
     with SonatypeCentralPublishModule:
   val millVersion = crossValue
-  override def scalaVersion = millVersion match
-    case millVersion if millVersion.startsWith("0.12") => "2.13.16"
-    case millVersion if millVersion.startsWith("1.0")  => "3.7.0"
+  override def scalaVersion = "3.7.1"
   override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
     ScalaVersion.unsafeFromString(scalaVersion()),
-    ScalacOptions.default + source3 // ++ fatalWarningOptions Reenable this once we drop support for Scala 2/0.12.x
+    ScalacOptions.default + source3 ++ fatalWarningOptions
   )
 
   override def compileMvnDeps = super.compileMvnDeps() ++ Seq(
