@@ -27,15 +27,15 @@ object CoursierUtils {
     }
 
   def toApiCredentials(auth: Authentication): coursierapi.Credentials =
-    coursierapi.Credentials.of(auth.user, auth.passwordOpt.getOrElse(""))
+    coursierapi.Credentials.of(auth.userOpt.getOrElse(""), auth.passwordOpt.getOrElse(""))
 
   def toCoordinates(dep: Dep): String =
     dep.cross match {
       case CrossVersion.Constant(value, _) =>
-        s"${dep.dep.module.organization.value}:${dep.dep.module.name.value}$value:${dep.dep.version}"
+        s"${dep.dep.module.organization.value}:${dep.dep.module.name.value}$value:${dep.dep.versionConstraint.asString}"
       case CrossVersion.Binary(_) =>
-        s"${dep.dep.module.organization.value}::${dep.dep.module.name.value}:${dep.dep.version}"
+        s"${dep.dep.module.organization.value}::${dep.dep.module.name.value}:${dep.dep.versionConstraint.asString}"
       case CrossVersion.Full(_) =>
-        s"${dep.dep.module.organization.value}:::${dep.dep.module.name.value}:${dep.dep.version}"
+        s"${dep.dep.module.organization.value}:::${dep.dep.module.name.value}:${dep.dep.versionConstraint.asString}"
     }
 }
