@@ -17,7 +17,7 @@ import scalafix.interfaces.ScalafixError.*
 import scala.jdk.CollectionConverters.*
 import scala.jdk.OptionConverters.*
 
-trait ScalafixModule extends ScalaModule {
+trait ScalafixModule extends ScalaModule:
   def scalafixConfig: T[Option[os.Path]] = Task(None)
   def scalafixIvyDeps: T[Seq[Dep]]       = Seq.empty[Dep]
 
@@ -58,9 +58,8 @@ trait ScalafixModule extends ScalaModule {
         BuildCtx.workspaceRoot
       )
     }
-}
 
-object ScalafixModule {
+object ScalafixModule:
   @deprecated("Use overload without scalaBinaryVersion and with wd instead", since = "0.4.2")
   def fixAction(
       log: Logger,
@@ -98,7 +97,7 @@ object ScalafixModule {
       args: Seq[String],
       wd: os.Path
   ): Result[Unit] =
-    if (sources.nonEmpty) {
+    if sources.nonEmpty then
       val scalafix = ScalafixCache
         .getOrElseCreate(scalaVersion, repositories, scalafixIvyDeps)
         .withParsedArguments(args.asJava)
@@ -111,10 +110,10 @@ object ScalafixModule {
 
       log.info(s"Rewriting and linting ${sources.size} Scala sources against ${scalafix.rulesThatWillRun.size} rules")
       val errors = scalafix.run()
-      if (errors.isEmpty) Result.Success(())
-      else {
+      if errors.isEmpty then Result.Success(())
+      else
         val errorMessages = errors.map {
-          case ParseError => "A source file failed to be parsed"
+          case ParseError       => "A source file failed to be parsed"
           case CommandLineError =>
             scalafix.validate().toScala.fold("A command-line argument was parsed incorrectly")(_.getMessage)
           case MissingSemanticdbError =>
@@ -130,16 +129,15 @@ object ScalafixModule {
           case _            => "Something unexpected happened running Scalafix"
         }
         Result.Failure(errorMessages.mkString("\n"))
-      }
-    } else Result.Success(())
+    else Result.Success(())
 
   def filesToFix(sources: Seq[PathRef]): Seq[PathRef] =
-    for {
+    for
       pathRef <- sources if os.exists(pathRef.path)
-      file <-
-        if (os.isDir(pathRef.path)) os.walk(pathRef.path).filter(file => os.isFile(file) && (file.ext == "scala"))
+      file    <-
+        if os.isDir(pathRef.path) then os.walk(pathRef.path).filter(file => os.isFile(file) && (file.ext == "scala"))
         else Seq(pathRef.path)
-    } yield PathRef(file)
+    yield PathRef(file)
 
   @deprecated("Use overload without scalaBinaryVersion instead", since = "0.4.2")
   def fixAction(
@@ -166,4 +164,3 @@ object ScalafixModule {
     args,
     wd
   )
-}

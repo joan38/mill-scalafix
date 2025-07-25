@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap
 import scala.jdk.CollectionConverters.*
 import scala.ref.SoftReference
 
-private[scalafix] object ScalafixCache {
+private[scalafix] object ScalafixCache:
 
   private val scalafixCache = new Cache[(String, java.util.List[coursierapi.Repository]), Scalafix](createFunction = {
     case (scalaVersion, repositories) =>
@@ -30,7 +30,7 @@ private[scalafix] object ScalafixCache {
   def getOrElseCreate(scalaVersion: String, repositories: Seq[Repository], scalafixIvyDeps: Seq[Dep]) =
     scalafixArgumentsCache.getOrElseCreate((scalaVersion, repositories, scalafixIvyDeps))
 
-  private class Cache[A, B <: AnyRef](createFunction: A => B) {
+  private class Cache[A, B <: AnyRef](createFunction: A => B):
     private val cache = new ConcurrentHashMap[A, SoftReference[B]]
 
     def getOrElseCreate(a: A) =
@@ -41,5 +41,3 @@ private[scalafix] object ScalafixCache {
           case _                         => SoftReference(createFunction(a))
         }
       )()
-  }
-}

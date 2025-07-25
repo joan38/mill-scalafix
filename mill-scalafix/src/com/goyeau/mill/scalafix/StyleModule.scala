@@ -6,7 +6,7 @@ import mill.scalalib.scalafmt.ScalafmtModule
 
 /** Combine Scalafmt and Scalafix together
   */
-trait StyleModule extends ScalafmtModule with ScalafixModule {
+trait StyleModule extends ScalafmtModule with ScalafixModule:
   def style(): Command[Unit] =
     Task.Command {
       reformat()()
@@ -18,4 +18,3 @@ trait StyleModule extends ScalafmtModule with ScalafixModule {
       checkFormat()()
       fix("--check")()
     }
-}
