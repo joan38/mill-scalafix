@@ -9,9 +9,10 @@ A [scalafix](https://scalacenter.github.io/scalafix) plugin for Mill build tool.
 
 ### Fix sources
 
-*build.sc*:
+*build.mill*:
 ```scala
-import $ivy.`com.goyeau::mill-scalafix::<latest version>`
+//| mvnDeps:
+//| - com.goyeau::mill-scalafix::0.6.0
 import com.goyeau.mill.scalafix.ScalafixModule
 import mill.scalalib._
 
