@@ -1,6 +1,6 @@
 # mill-scalafix
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.goyeau/mill-scalafix_mill0.11_2.13)](https://mvnrepository.com/artifact/com.goyeau/mill-scalafix_mill0.11)
+[![Maven Central](https://img.shields.io/maven-central/v/com.goyeau/mill-scalafix_mill1_3)](https://mvnrepository.com/artifact/com.goyeau/mill-scalafix_mill1)
 
 A [scalafix](https://scalacenter.github.io/scalafix) plugin for Mill build tool.
 
