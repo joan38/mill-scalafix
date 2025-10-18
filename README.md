@@ -16,9 +16,8 @@ A [scalafix](https://scalacenter.github.io/scalafix) plugin for Mill build tool.
 import com.goyeau.mill.scalafix.ScalafixModule
 import mill.scalalib._
 
-object project extends ScalaModule with ScalafixModule {
-  def scalaVersion = "2.13.15"
-}
+object project extends ScalaModule with ScalafixModule:
+  def scalaVersion = "3.7.3"
 ```
 
 ```shell script
@@ -37,7 +36,7 @@ You're also able to use external Scalafix rules by adding them like the below
 example:
 
 ```scala
-def scalafixIvyDeps = Agg(ivy"com.github.xuwei-k::scalafix-rules:0.3.0")
+def scalafixIvyDeps = Seq(mvn"com.github.xuwei-k::scalafix-rules:0.6.17")
 ```
 
 ### Scalafix Arguments
