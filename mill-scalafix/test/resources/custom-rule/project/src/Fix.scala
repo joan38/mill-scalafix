@@ -1,2 +1,1 @@
-object Custom {
-}
+object Custom {}
