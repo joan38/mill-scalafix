@@ -23,8 +23,8 @@ trait MillScalafixCross
     with StyleModule
     with GitVersionedPublishModule
     with SonatypeCentralPublishModule:
-  val millVersion = crossValue
-  override def scalaVersion = "3.7.1"
+  val millVersion            = crossValue
+  override def scalaVersion  = "3.7.1"
   override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
     ScalaVersion.unsafeFromString(scalaVersion()),
     ScalacOptions.default + source3 ++ fatalWarningOptions
@@ -34,7 +34,7 @@ trait MillScalafixCross
     mvn"com.lihaoyi::mill-libs-scalalib:$millVersion"
   )
   override def mvnDeps = super.mvnDeps() ++ Seq(
-    mvn"ch.epfl.scala:scalafix-interfaces:0.14.2"
+    mvn"ch.epfl.scala:scalafix-interfaces:0.14.5"
   )
 
   object test extends ScalaTests with TestModule.Munit:
@@ -52,7 +52,7 @@ trait MillScalafixCross
 
   override def artifactName   = s"mill-scalafix_mill${millBinaryVersion(millVersion)}"
   override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
-  def pomSettings = PomSettings(
+  def pomSettings             = PomSettings(
     description = "A Scalafix plugin for Mill build tool",
     organization = "com.goyeau",
     url = "https://github.com/joan38/mill-scalafix",
