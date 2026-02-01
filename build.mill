@@ -24,7 +24,7 @@ trait MillScalafixCross
     with GitVersionedPublishModule
     with SonatypeCentralPublishModule:
   val millVersion            = crossValue
-  override def scalaVersion  = "3.7.1"
+  override def scalaVersion  = "3.7.4"
   override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
     ScalaVersion.unsafeFromString(scalaVersion()),
     ScalacOptions.default + source3 ++ fatalWarningOptions
