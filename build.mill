@@ -39,7 +39,7 @@ trait MillScalafixCross
 
   object test extends ScalaTests with TestModule.Munit:
     override def mvnDeps = Seq(
-      mvn"org.scalameta::munit::1.1.0",
+      mvn"org.scalameta::munit::1.1.1",
       mvn"com.lihaoyi::mill-testkit:$millVersion"
     )
     override def forkEnv = Map("MILL_EXECUTABLE_PATH" -> millExecutable.assembly().path.toString)
