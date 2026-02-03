@@ -1,9 +1,10 @@
 package com.goyeau.mill.scalafix
 
 import munit.FunSuite
+
 import scala.concurrent.duration.*
 
-class StyleIntegrationTests extends FunSuite {
+class StyleIntegrationTests extends FunSuite:
   override val munitTimeout: Duration = 2.minute
 
   test("style should fix and format the code") {
@@ -12,12 +13,12 @@ class StyleIntegrationTests extends FunSuite {
     assert(result.isSuccess, result.err)
 
     val fixedScala = os.read(tester.workspacePath / "project" / "src" / "Fix.scala")
-    val expected = """
-                     |
-                     |object Fix {
-                     |  def myComplexMethod: Map[Int, String] = 1.to(10).map(i => i -> i.toString).toMap
-                     |}
-                     |""".stripMargin
+    val expected   = """
+                       |
+                       |object Fix {
+                       |  def myComplexMethod: Map[Int, String] = 1.to(10).map(i => i -> i.toString).toMap
+                       |}
+                       |""".stripMargin
     assertEquals(fixedScala, expected)
   }
 
@@ -32,4 +33,3 @@ class StyleIntegrationTests extends FunSuite {
     val result = tester.eval(Seq("project.checkStyle"))
     assert(!result.isSuccess, "Check should have failed")
   }
-}
