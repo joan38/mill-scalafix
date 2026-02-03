@@ -1,58 +1,54 @@
-//| mill-version: 1.0.1-native
+//| mill-version: 1.1.0-native
 //| mill-jvm-version: 20
-//| repositories:
-//| - https://central.sonatype.com/repository/maven-snapshots
-//| - https://oss.sonatype.org/content/repositories/snapshots
 //| mvnDeps:
-//| - com.goyeau::mill-git::0.3.0
+//| - com.goyeau::mill-git::0.3.2
 //| - com.goyeau::mill-scalafix::0.6.0
-//| - org.typelevel::scalac-options:0.1.7
+//| - org.typelevel::scalac-options:0.1.8
 
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
 import com.goyeau.mill.scalafix.StyleModule
 import mill.*
-import mill.api.Cross
 import mill.scalalib.*
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import org.typelevel.scalacoptions.ScalacOptions.*
 import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
 
-object `mill-scalafix` extends Cross[MillScalafixCross]("1.0.0")
-trait MillScalafixCross
-    extends Cross.Module[String]
+object `mill-scalafix`
+    extends ScalaModule
     with StyleModule
     with GitVersionedPublishModule
     with SonatypeCentralPublishModule:
-  val millVersion            = crossValue
-  override def scalaVersion  = "3.7.4"
-  override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
+  val millVersion   = "1.0.0"
+  def scalaVersion  = "3.7.4"
+  def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
     ScalaVersion.unsafeFromString(scalaVersion()),
-    ScalacOptions.default + source3 ++ fatalWarningOptions
+    ScalacOptions.default + newSyntax ++ fatalWarningOptions
   )
 
-  override def compileMvnDeps = super.compileMvnDeps() ++ Seq(
+  def compileMvnDeps = super.compileMvnDeps() ++ Seq(
     mvn"com.lihaoyi::mill-libs-scalalib:$millVersion"
   )
-  override def mvnDeps = super.mvnDeps() ++ Seq(
+  def mvnDeps = super.mvnDeps() ++ Seq(
     mvn"ch.epfl.scala:scalafix-interfaces:0.14.5"
   )
 
   object test extends ScalaTests with TestModule.Munit:
-    override def mvnDeps = Seq(
+    def mvnDeps = Seq(
       mvn"org.scalameta::munit::1.1.0",
       mvn"com.lihaoyi::mill-testkit:$millVersion"
     )
-    override def forkEnv = Map("MILL_EXECUTABLE_PATH" -> millExecutable.assembly().path.toString)
+    def forkEnv = Map("MILL_EXECUTABLE_PATH" -> millExecutable.assembly().path.toString)
 
     // Create a Mill executable configured for testing our plugin
     object millExecutable extends JavaModule:
-      override def mvnDeps   = Seq(mvn"com.lihaoyi:mill-runner-launcher_3:$millVersion")
-      override def mainClass = Some("mill.launcher.MillLauncherMain")
+      def mvnDeps   = Seq(mvn"com.lihaoyi:mill-runner-launcher_3:$millVersion")
+      def mainClass = Some("mill.launcher.MillLauncherMain")
   end test
 
-  override def artifactName   = s"mill-scalafix_mill${millBinaryVersion(millVersion)}"
-  override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
-  def pomSettings             = PomSettings(
+  def artifactName   = s"mill-scalafix"
+  def platformSuffix = s"_mill1"
+  def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
+  def pomSettings    = PomSettings(
     description = "A Scalafix plugin for Mill build tool",
     organization = "com.goyeau",
     url = "https://github.com/joan38/mill-scalafix",
@@ -60,9 +56,3 @@ trait MillScalafixCross
     versionControl = VersionControl.github("joan38", "mill-scalafix"),
     developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
   )
-end MillScalafixCross
-
-def millBinaryVersion(millVersion: String) = millVersion match
-  case version if version.startsWith("0.12") => "0.11" // 0.12.x is binary compatible with 0.11.x
-  case version if version.startsWith("1.")   => "1"
-  case _ => throw IllegalArgumentException(s"Unsupported Mill version: $millVersion")

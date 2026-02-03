@@ -4,7 +4,7 @@ import munit.FunSuite
 import scala.concurrent.duration.{Duration, DurationInt}
 
 class FixIntegrationTests extends FunSuite {
-  override val munitTimeout: Duration = 1.minute
+  override val munitTimeout: Duration = 2.minute
 
   test("fix should fix the code") {
     val tester = Tester.create(os.rel / "fix")

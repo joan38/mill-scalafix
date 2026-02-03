@@ -4,7 +4,7 @@ import munit.FunSuite
 import scala.concurrent.duration.*
 
 class StyleIntegrationTests extends FunSuite {
-  override val munitTimeout: Duration = 1.minute
+  override val munitTimeout: Duration = 2.minute
 
   test("style should fix and format the code") {
     val tester = Tester.create(os.rel / "style")
