@@ -1,9 +1,11 @@
 package com.goyeau.mill.scalafix
 
 import munit.FunSuite
-import scala.concurrent.duration.{Duration, DurationInt}
 
-class FixIntegrationTests extends FunSuite {
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration.DurationInt
+
+class FixIntegrationTests extends FunSuite:
   override val munitTimeout: Duration = 2.minute
 
   test("fix should fix the code") {
@@ -12,11 +14,11 @@ class FixIntegrationTests extends FunSuite {
     assert(result.isSuccess, result.err)
 
     val fixedScala = os.read(tester.workspacePath / "project" / "src" / "Fix.scala")
-    val expected = """object Fix {
-                     |  def procedure(): Unit = {}
-                     |  def myComplexMethod: Map[Int,String] = 1.to(10).map(i => i -> i.toString).toMap
-                     |}
-                     |""".stripMargin
+    val expected   = """object Fix {
+                       |  def procedure(): Unit = {}
+                       |  def myComplexMethod: Map[Int,String] = 1.to(10).map(i => i -> i.toString).toMap
+                       |}
+                       |""".stripMargin
     assertEquals(fixedScala, expected)
   }
 
@@ -26,12 +28,12 @@ class FixIntegrationTests extends FunSuite {
     assert(result.isSuccess, result.err)
 
     val fixedScala = os.read(tester.workspacePath / "project" / "src" / "Fix.scala")
-    val expected = """
-                     |
-                     |object Fix {
-                     |  def procedure(): Unit = {}
-                     |}
-                     |""".stripMargin
+    val expected   = """
+                       |
+                       |object Fix {
+                       |  def procedure(): Unit = {}
+                       |}
+                       |""".stripMargin
     assertEquals(fixedScala, expected)
   }
 
@@ -41,7 +43,7 @@ class FixIntegrationTests extends FunSuite {
     assert(result.isSuccess, result.err)
 
     val fixedScala = os.read(tester.workspacePath / "project" / "src" / "Fix.scala")
-    val expected =
+    val expected   =
       """object Fix {
         |  // use a 3.5.x-only feature to fail if a Scala 3 LTS compiler is used
         |  // https://www.scala-lang.org/blog/2024/08/22/scala-3.5.0-released.html#support-for-binary-integer-literals
@@ -69,10 +71,9 @@ class FixIntegrationTests extends FunSuite {
     assert(result.isSuccess, result.err)
 
     val fixedScala = os.read(tester.workspacePath / "project" / "src" / "Fix.scala")
-    val expected = """object Custom {
-                     |}
-                     |// v1 SyntacticRule!
-                     |""".stripMargin
+    val expected   = """object Custom {
+                       |}
+                       |// v1 SyntacticRule!
+                       |""".stripMargin
     assertEquals(fixedScala, expected)
   }
-}
