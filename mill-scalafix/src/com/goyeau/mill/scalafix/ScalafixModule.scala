@@ -101,12 +101,17 @@ object ScalafixModule:
       val scalafix = ScalafixCache
         .getOrElseCreate(scalaVersion, repositories, scalafixIvyDeps)
         .withParsedArguments(args.asJava)
-        .withWorkingDirectory(wd.toNIO)
-        .withConfig(scalafixConfig.map(_.toNIO).toJava)
-        .withClasspath(classpath.map(_.toNIO).asJava)
+        // `.toNIO.toAbsolutePath`, not bare `.toNIO`: scalafix does real filesystem work with these
+        // paths and requires an absolute working directory (`require(path.isAbsolute, ...)`). Under
+        // Mill's reproducible-`out/` path relativization (`OS_LIB_PATH_RELATIVIZER_BASE`), `.toNIO`
+        // yields the relativized `../mill-workspace` form, which is not absolute and makes scalafix
+        // throw.
+        .withWorkingDirectory(wd.toNIO.toAbsolutePath)
+        .withConfig(scalafixConfig.map(_.toNIO.toAbsolutePath).toJava)
+        .withClasspath(classpath.map(_.toNIO.toAbsolutePath).asJava)
         .withScalaVersion(scalaVersion)
         .withScalacOptions(scalacOptions.asJava)
-        .withPaths(sources.map(_.toNIO).asJava)
+        .withPaths(sources.map(_.toNIO.toAbsolutePath).asJava)
 
       log.info(s"Rewriting and linting ${sources.size} Scala sources against ${scalafix.rulesThatWillRun.size} rules")
       val errors = scalafix.run()
