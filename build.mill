@@ -19,7 +19,7 @@ object `mill-scalafix`
     with GitVersionedPublishModule
     with SonatypeCentralPublishModule:
   val millVersion   = "1.0.0"
-  def scalaVersion  = "3.7.4"
+  def scalaVersion  = "3.8.4"
   def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
     ScalaVersion.unsafeFromString(scalaVersion()),
     ScalacOptions.default + newSyntax ++ fatalWarningOptions
