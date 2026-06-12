@@ -8,4 +8,4 @@ import mill.scalalib.*
 object project extends ScalaModule with ScalafixModule:
   def scalaVersion  = "2.12.20"
   def scalacOptions = Seq("-Ywarn-unused")
-  def mvnDeps = Seq(mvn"org.scala-lang.modules::scala-collection-compat:2.13.0")
+  def mvnDeps       = Seq(mvn"org.scala-lang.modules::scala-collection-compat:2.13.0")
