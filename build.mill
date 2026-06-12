@@ -34,7 +34,7 @@ object `mill-scalafix`
 
   object test extends ScalaTests with TestModule.Munit with StyleModule:
     def mvnDeps = Seq(
-      mvn"org.scalameta::munit::1.2.2",
+      mvn"org.scalameta::munit::1.2.4",
       mvn"com.lihaoyi::mill-testkit:$millVersion"
     )
     def forkEnv = Map("MILL_EXECUTABLE_PATH" -> millExecutable.assembly().path.toString)
