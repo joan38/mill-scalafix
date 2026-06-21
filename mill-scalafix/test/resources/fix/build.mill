@@ -6,6 +6,6 @@ import mill.*
 import mill.scalalib.*
 
 object project extends ScalaModule with ScalafixModule:
-  def scalaVersion  = "2.13.16"
+  def scalaVersion               = "2.13.16"
   def scalafixScalaBinaryVersion = "2.13"
-  def scalacOptions = Seq("-Ywarn-unused")
+  def scalacOptions              = Seq("-Ywarn-unused")
