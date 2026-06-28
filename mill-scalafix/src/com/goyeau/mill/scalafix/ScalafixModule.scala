@@ -21,6 +21,19 @@ trait ScalafixModule extends ScalaModule:
   def scalafixConfig: T[Option[os.Path]] = Task(None)
   def scalafixIvyDeps: T[Seq[Dep]]       = Seq.empty[Dep]
 
+  /** Extra entries appended to Scalafix's tool classpath (the classloader that rules are loaded from), in addition to
+    * the published artifacts in [[scalafixIvyDeps]].
+    *
+    * Use this to load rules compiled in the same build — e.g. an in-repo rule module — without a `publishLocal` round
+    * trip:
+    * {{{
+    * def scalafixToolClasspath = Task { Seq(rules.jar()) ++ rules.runClasspath() }
+    * }}}
+    * Rule modules must target Scala 2.13, since Scalafix loads rules through a 2.13 classloader regardless of the
+    * linted module's Scala version, and typically depend on `ch.epfl.scala::scalafix-core`.
+    */
+  def scalafixToolClasspath: T[Seq[PathRef]] = Task(Seq.empty[PathRef])
+
   /** Override this to filter out repositories that don't need to be passed to scalafix
     *
     * Repositories passed to scalafix need to be converted to the coursier-interface API (coursierapi.*). This can be an
@@ -55,7 +68,8 @@ trait ScalafixModule extends ScalaModule:
         scalafixIvyDeps(),
         scalafixConfig(),
         args,
-        BuildCtx.workspaceRoot
+        BuildCtx.workspaceRoot,
+        scalafixToolClasspath().map(_.path)
       )
     }
 
@@ -95,11 +109,12 @@ object ScalafixModule:
       scalafixIvyDeps: Seq[Dep],
       scalafixConfig: Option[os.Path],
       args: Seq[String],
-      wd: os.Path
+      wd: os.Path,
+      scalafixToolClasspath: Seq[os.Path] = Seq.empty
   ): Result[Unit] =
     if sources.nonEmpty then
       val scalafix = ScalafixCache
-        .getOrElseCreate(scalaVersion, repositories, scalafixIvyDeps)
+        .getOrElseCreate(scalaVersion, repositories, scalafixIvyDeps, scalafixToolClasspath)
         .withParsedArguments(args.asJava)
         // `.toNIO.toAbsolutePath`, not bare `.toNIO`: scalafix does real filesystem work with these
         // paths and requires an absolute working directory (`require(path.isAbsolute, ...)`). Under

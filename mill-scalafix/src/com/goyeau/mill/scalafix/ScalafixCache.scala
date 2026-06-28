@@ -17,18 +17,24 @@ private[scalafix] object ScalafixCache:
   })
 
   private val scalafixArgumentsCache =
-    new Cache[(String, Seq[Repository], Seq[Dep]), ScalafixArguments](createFunction = {
-      case (scalaVersion, repositories, scalafixIvyDeps) =>
-        val repos = repositories.map(CoursierUtils.toApiRepository).asJava
-        val deps  = scalafixIvyDeps.map(CoursierUtils.toCoordinates).iterator.toSeq.asJava
+    new Cache[(String, Seq[Repository], Seq[Dep], Seq[os.Path]), ScalafixArguments](createFunction = {
+      case (scalaVersion, repositories, scalafixIvyDeps, scalafixToolClasspath) =>
+        val repos    = repositories.map(CoursierUtils.toApiRepository).asJava
+        val deps     = scalafixIvyDeps.map(CoursierUtils.toCoordinates).iterator.toSeq.asJava
+        val toolUrls = scalafixToolClasspath.map(_.toNIO.toAbsolutePath.toUri.toURL).asJava
         scalafixCache
           .getOrElseCreate((scalaVersion, repos))
           .newArguments()
-          .withToolClasspath(Seq.empty.asJava, deps, repos)
+          .withToolClasspath(toolUrls, deps, repos)
     })
 
-  def getOrElseCreate(scalaVersion: String, repositories: Seq[Repository], scalafixIvyDeps: Seq[Dep]) =
-    scalafixArgumentsCache.getOrElseCreate((scalaVersion, repositories, scalafixIvyDeps))
+  def getOrElseCreate(
+      scalaVersion: String,
+      repositories: Seq[Repository],
+      scalafixIvyDeps: Seq[Dep],
+      scalafixToolClasspath: Seq[os.Path]
+  ) =
+    scalafixArgumentsCache.getOrElseCreate((scalaVersion, repositories, scalafixIvyDeps, scalafixToolClasspath))
 
   private class Cache[A, B <: AnyRef](createFunction: A => B):
     private val cache = new ConcurrentHashMap[A, SoftReference[B]]

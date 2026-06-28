@@ -1,0 +1,16 @@
+//| repositories: [https://central.sonatype.com/repository/maven-snapshots]
+//| mvnDeps:
+//| - com.goyeau::mill-scalafix::0.6.0
+import com.goyeau.mill.scalafix.ScalafixModule
+import mill.*
+import mill.scalalib.*
+
+// In-repo Scalafix rule. Scala 2.13 because Scalafix loads rules via a 2.13 classloader.
+object rule extends ScalaModule:
+  def scalaVersion = "2.13.16"
+  def mvnDeps      = Seq(mvn"ch.epfl.scala::scalafix-core:0.14.7")
+
+// Linted module: loads the in-repo rule through `scalafixToolClasspath` (no publishLocal round trip).
+object project extends ScalaModule with ScalafixModule:
+  def scalaVersion          = "3.3.4"
+  def scalafixToolClasspath = Task { Seq(rule.jar()) ++ rule.runClasspath() }

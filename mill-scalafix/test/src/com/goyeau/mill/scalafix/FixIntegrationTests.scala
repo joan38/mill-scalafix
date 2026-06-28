@@ -77,3 +77,19 @@ class FixIntegrationTests extends FunSuite:
                        |""".stripMargin
     assertEquals(fixedScala, expected)
   }
+
+  // Like the other integration tests, the `local-rule` resource resolves the *published* `com.goyeau::mill-scalafix`
+  // (pinned in its build.mill header), so this test can only pass once a release containing `scalafixToolClasspath` is
+  // out — bump that header alongside the others and drop `.ignore` at release time. Verified locally against this
+  // working copy with `./mill mill-scalafix.publishLocal` and the resource pinned to the resulting -SNAPSHOT.
+  test("fix should run rules from scalafixToolClasspath (in-repo rule modules)".ignore) {
+    val tester = Tester.create(os.rel / "local-rule")
+    val result = tester.eval(Seq("project.fix"))
+    assert(result.isSuccess, result.err)
+
+    val fixedScala = os.read(tester.workspacePath / "project" / "src" / "Fix.scala")
+    val expected   = """object Fix:
+                       |  def todo: Unit = ()
+                       |""".stripMargin
+    assertEquals(fixedScala, expected)
+  }
