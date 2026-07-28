@@ -13,4 +13,4 @@ object rule extends ScalaModule:
 // Linted module: loads the in-repo rule through `scalafixToolClasspath` (no publishLocal round trip).
 object project extends ScalaModule with ScalafixModule:
   def scalaVersion          = "3.3.4"
-  def scalafixToolClasspath = Task { Seq(rule.jar()) ++ rule.runClasspath() }
+  def scalafixToolClasspath = Task(Seq(rule.jar()) ++ rule.runClasspath())
