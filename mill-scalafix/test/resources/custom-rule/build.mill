@@ -6,6 +6,7 @@ import mill.*
 import mill.scalalib.*
 
 object project extends ScalaModule with ScalafixModule:
-  def scalaVersion    = "2.12.20"
-  def semanticDbEnablePluginScalacOptions = super.semanticDbEnablePluginScalacOptions() ++ Seq("-P:semanticdb:synthetics:on")
+  def scalaVersion                        = "2.12.20"
+  def semanticDbEnablePluginScalacOptions =
+    super.semanticDbEnablePluginScalacOptions() ++ Seq("-P:semanticdb:synthetics:on")
   def scalafixIvyDeps = Seq(mvn"ch.epfl.scala::example-scalafix-rule:4.0.0")
